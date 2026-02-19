@@ -1,22 +1,5 @@
 [
   {
-    "id": "seed1",
-    "pollster": "Harvard Harris",
-    "date": "2026-02-02",
-    "sampleSize": 1200,
-    "source_url": null,
-    "harris": 39,
-    "newsom": 30,
-    "buttigieg": 5,
-    "ocasio": 12,
-    "shapiro": 4,
-    "pritzker": 3,
-    "booker": 2,
-    "whitmer": 2,
-    "beshear": 1,
-    "kelly": 2
-  },
-  {
     "id": "seed2",
     "pollster": "Focaldata",
     "date": "2026-02-10",
@@ -32,6 +15,23 @@
     "whitmer": 4,
     "beshear": 1,
     "kelly": 6
+  },
+  {
+    "id": "seed1",
+    "pollster": "Harvard Harris",
+    "date": "2026-02-02",
+    "sampleSize": 1200,
+    "source_url": null,
+    "harris": 39,
+    "newsom": 30,
+    "buttigieg": 5,
+    "ocasio": 12,
+    "shapiro": 4,
+    "pritzker": 3,
+    "booker": 2,
+    "whitmer": 2,
+    "beshear": 1,
+    "kelly": 2
   },
   {
     "id": "seed3",
