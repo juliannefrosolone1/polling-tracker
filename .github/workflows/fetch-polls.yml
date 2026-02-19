@@ -1,0 +1,36 @@
+name: Fetch Latest Polls
+
+on:
+  schedule:
+    # Runs every day at 9am UTC
+    - cron: "0 9 * * *"
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  fetch-polls:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install anthropic
+
+      - name: Run poll fetcher
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/fetch_polls.py
+
+      - name: Commit updated polls data
+        run: |
+          git config --global user.name "Poll Bot"
+          git config --global user.email "pollbot@github-actions"
+          git add public/polls.json
+          git diff --staged --quiet || git commit -m "chore: update polls data [$(date +'%Y-%m-%d')]"
+          git push
