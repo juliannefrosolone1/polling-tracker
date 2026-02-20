@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from "recharts";
-
 const CANDIDATES = [
   { id: "harris",    name: "Kamala Harris",            short: "Harris",    color: "#1a6bff" },
   { id: "newsom",    name: "Gavin Newsom",              short: "Newsom",    color: "#e63946" },
@@ -13,403 +12,136 @@ const CANDIDATES = [
   { id: "beshear",   name: "Andy Beshear",              short: "Beshear",   color: "#ef476f" },
   { id: "kelly",     name: "Mark Kelly",                short: "Kelly",     color: "#118ab2" },
 ];
-
-const DEMO_CATEGORIES = ["gender", "age", "race", "education", "ideology"];
-const DEMO_LABELS = { gender: "Gender", age: "Age Group", race: "Race / Ethnicity", education: "Education", ideology: "Political Ideology" };
+const DEMO_CATEGORIES = ["gender","age","race","education","ideology"];
+const DEMO_LABELS = {gender:"Gender",age:"Age Group",race:"Race / Ethnicity",education:"Education",ideology:"Political Ideology"};
 const GROUP_COLORS = ["#1a6bff","#e63946","#2a9d8f","#f4a261","#9b5de5","#e9c46a"];
-
-function weightedAverage(polls, candId) {
-  if (!polls.length) return null;
-  let totalWeight = 0, weightedSum = 0;
-  const now = new Date();
-  polls.forEach(p => {
-    const val = parseFloat(p[candId]);
-    if (isNaN(val)) return;
-    const age = (now - new Date(p.date)) / (1000 * 60 * 60 * 24);
-    const recency = Math.exp(-age / 60);
-    const size = Math.sqrt(parseFloat(p.sampleSize) || 500);
-    const w = recency * size;
-    totalWeight += w;
-    weightedSum += val * w;
-  });
-  return totalWeight > 0 ? (weightedSum / totalWeight).toFixed(1) : null;
-}
-
-function formatDate(d) {
-  if (!d) return "";
-  const [y, m, day] = d.split("-");
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
-}
-
-const labelStyle = { display:"block", fontSize:10, color:"#666", fontFamily:"monospace", letterSpacing:"0.1em", marginBottom:4, textTransform:"uppercase" };
-const inputStyle = { background:"#0a0a0f", border:"1px solid #333", color:"#e8e6df", padding:"8px 10px", fontFamily:"monospace", fontSize:13, width:"100%", boxSizing:"border-box", outline:"none" };
-const thStyle   = { textAlign:"left", padding:"8px 12px", color:"#666", borderBottom:"1px solid #333", fontWeight:"normal", letterSpacing:"0.1em", fontSize:11 };
-const tdStyle   = { padding:"8px 12px", color:"#e8e6df" };
-const EMPTY_POLL = { pollster:"", date:"", sampleSize:"", harris:"", newsom:"", buttigieg:"", ocasio:"", shapiro:"", pritzker:"", booker:"", whitmer:"", beshear:"", kelly:"" };
-
-function CrosstabsPanel({ polls, candidate }) {
-  const [activeCategory, setActiveCategory] = useState("gender");
-  const pollsWithCrosstabs = polls.filter(p => p.crosstabs && p.crosstabs[candidate.id] && p.crosstabs[candidate.id][activeCategory]);
-
-  if (!polls.some(p => p.crosstabs && p.crosstabs[candidate.id])) {
-    return (
-      <div style={{ color:"#555", fontFamily:"monospace", fontSize:13, padding:"40px 0" }}>
-        No crosstab data available for {candidate.name} yet.
+function weightedAverage(polls,candId){if(!polls.length)return null;let tw=0,ws=0;const now=new Date();polls.forEach(p=>{const val=parseFloat(p[candId]);if(isNaN(val))return;const age=(now-new Date(p.date))/(1000*60*60*24);const w=Math.exp(-age/60)*Math.sqrt(parseFloat(p.sampleSize)||500);tw+=w;ws+=val*w;});return tw>0?(ws/tw).toFixed(1):null;}
+function formatDate(d){if(!d)return"";const[y,m,day]=d.split("-");const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return`${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;}
+const labelStyle={display:"block",fontSize:10,color:"#666",fontFamily:"monospace",letterSpacing:"0.1em",marginBottom:4,textTransform:"uppercase"};
+const inputStyle={background:"#0a0a0f",border:"1px solid #333",color:"#e8e6df",padding:"8px 10px",fontFamily:"monospace",fontSize:13,width:"100%",boxSizing:"border-box",outline:"none"};
+const thStyle={textAlign:"left",padding:"8px 12px",color:"#666",borderBottom:"1px solid #333",fontWeight:"normal",letterSpacing:"0.1em",fontSize:11};
+const tdStyle={padding:"8px 12px",color:"#e8e6df"};
+const EMPTY_POLL={pollster:"",date:"",state:"National",sampleSize:"",harris:"",newsom:"",buttigieg:"",ocasio:"",shapiro:"",pritzker:"",booker:"",whitmer:"",beshear:"",kelly:""};
+function CrosstabsPanel({polls,candidate}){
+  const [activeCategory,setActiveCategory]=useState("gender");
+  const pollsWithData=polls.filter(p=>p.crosstabs?.[candidate.id]);
+  if(pollsWithData.length===0)return(<div style={{color:"#555",fontFamily:"monospace",fontSize:13,padding:"40px 0"}}>No crosstab data available for {candidate.name} in the selected polls.</div>);
+  const latest=[...pollsWithData].sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+  const catData=latest?.crosstabs?.[candidate.id]?.[activeCategory];
+  const barData=catData?Object.entries(catData).map(([group,value])=>({group,value})):[];
+  const demoGroups=catData?Object.keys(catData):[];
+  const trendData=[...pollsWithData].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(p=>{const row={label:`${formatDate(p.date)} (${p.state||"Natl"})`,overall:parseFloat(p[candidate.id])||null};const cd=p.crosstabs?.[candidate.id]?.[activeCategory]||{};Object.entries(cd).forEach(([k,v])=>{row[k]=v;});return row;});
+  return(<div>
+    <div style={{display:"flex",gap:0,marginBottom:24,borderBottom:"1px solid #222",flexWrap:"wrap"}}>
+      {DEMO_CATEGORIES.map(cat=>(<button key={cat} onClick={()=>setActiveCategory(cat)} style={{background:"none",border:"none",borderBottom:activeCategory===cat?`2px solid ${candidate.color}`:"2px solid transparent",color:activeCategory===cat?"#e8e6df":"#555",padding:"8px 16px",cursor:"pointer",fontFamily:"monospace",fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase"}}>{DEMO_LABELS[cat]}</button>))}
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:32}}>
+      <div>
+        <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.12em",marginBottom:12}}>LATEST SNAPSHOT · {latest?`${formatDate(latest.date)} · ${latest.pollster} · ${latest.state||"National"}`:""}</div>
+        {barData.length>0?(<ResponsiveContainer width="100%" height={220}><BarChart data={barData} layout="vertical" margin={{left:10,right:30}}><XAxis type="number" domain={[0,100]} tick={{fill:"#555",fontSize:10,fontFamily:"monospace"}} tickLine={false} unit="%"/><YAxis type="category" dataKey="group" tick={{fill:"#aaa",fontSize:11,fontFamily:"monospace"}} tickLine={false} width={95}/><Tooltip contentStyle={{background:"#111118",border:"1px solid #333",fontFamily:"monospace",fontSize:12}} formatter={val=>[`${val}%`,candidate.short]}/><Bar dataKey="value" radius={[0,3,3,0]}>{barData.map((_,i)=><Cell key={i} fill={candidate.color} opacity={0.5+(i*0.1)}/>)}</Bar></BarChart></ResponsiveContainer>):<div style={{color:"#444",fontFamily:"monospace",fontSize:12,padding:"20px 0"}}>No data for this category.</div>}
       </div>
-    );
-  }
-
-  const latestPoll = [...polls].filter(p => p.crosstabs?.[candidate.id]).sort((a,b) => new Date(b.date)-new Date(a.date))[0];
-  const categoryData = latestPoll?.crosstabs?.[candidate.id]?.[activeCategory];
-  const barData = categoryData ? Object.entries(categoryData).map(([group, value]) => ({ group, value })) : [];
-  const demoGroups = categoryData ? Object.keys(categoryData) : [];
-
-  const trendData = [...polls]
-    .filter(p => p.crosstabs?.[candidate.id])
-    .sort((a,b) => new Date(a.date)-new Date(b.date))
-    .map(p => {
-      const row = { label: formatDate(p.date), pollster: p.pollster, overall: parseFloat(p[candidate.id]) || null };
-      const catData = p.crosstabs?.[candidate.id]?.[activeCategory] || {};
-      Object.entries(catData).forEach(([k,v]) => { row[k] = v; });
-      return row;
-    });
-
-  return (
-    <div>
-      <div style={{ display:"flex", gap:0, marginBottom:24, borderBottom:"1px solid #222", flexWrap:"wrap" }}>
-        {DEMO_CATEGORIES.map(cat => (
-          <button key={cat} onClick={()=>setActiveCategory(cat)} style={{
-            background:"none", border:"none",
-            borderBottom: activeCategory===cat ? `2px solid ${candidate.color}` : "2px solid transparent",
-            color: activeCategory===cat ? "#e8e6df" : "#555",
-            padding:"8px 16px", cursor:"pointer", fontFamily:"monospace", fontSize:11, letterSpacing:"0.08em", textTransform:"uppercase"
-          }}>
-            {DEMO_LABELS[cat]}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:32 }}>
-        <div>
-          <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.12em", marginBottom:12 }}>
-            LATEST SNAPSHOT · {latestPoll ? `${formatDate(latestPoll.date)} (${latestPoll.pollster})` : ""}
-          </div>
-          {barData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={barData} layout="vertical" margin={{ left:10, right:30 }}>
-                <XAxis type="number" domain={[0,100]} tick={{ fill:"#555", fontSize:10, fontFamily:"monospace" }} tickLine={false} unit="%" />
-                <YAxis type="category" dataKey="group" tick={{ fill:"#aaa", fontSize:11, fontFamily:"monospace" }} tickLine={false} width={95} />
-                <Tooltip contentStyle={{ background:"#111118", border:"1px solid #333", fontFamily:"monospace", fontSize:12 }} formatter={val => [`${val}%`, candidate.short]} />
-                <Bar dataKey="value" radius={[0,3,3,0]}>
-                  {barData.map((_, i) => <Cell key={i} fill={candidate.color} opacity={0.5 + (i * 0.1)} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div style={{ color:"#444", fontFamily:"monospace", fontSize:12, padding:"20px 0" }}>No data for this category in latest poll.</div>
-          )}
-        </div>
-
-        <div>
-          <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.12em", marginBottom:12 }}>
-            TREND BY GROUP · across all polls
-          </div>
-          {trendData.length >= 2 && demoGroups.length > 0 ? (
-            <>
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={trendData} margin={{ top:4, right:16, left:0, bottom:4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1a22" />
-                  <XAxis dataKey="label" tick={{ fill:"#555", fontSize:9, fontFamily:"monospace" }} tickLine={false} />
-                  <YAxis tick={{ fill:"#555", fontSize:10, fontFamily:"monospace" }} tickLine={false} unit="%" domain={[0,"auto"]} />
-                  <Tooltip contentStyle={{ background:"#111118", border:"1px solid #333", fontFamily:"monospace", fontSize:11 }} formatter={(v,n) => [`${v}%`, n]} />
-                  {demoGroups.map((g,i) => (
-                    <Line key={g} type="monotone" dataKey={g} stroke={GROUP_COLORS[i % GROUP_COLORS.length]} strokeWidth={2} dot={{ r:3 }} connectNulls />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
-              <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:8 }}>
-                {demoGroups.map((g,i) => (
-                  <span key={g} style={{ fontSize:10, fontFamily:"monospace", color: GROUP_COLORS[i % GROUP_COLORS.length] }}>● {g}</span>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div style={{ color:"#444", fontFamily:"monospace", fontSize:12, padding:"20px 0" }}>Need 2+ polls with crosstab data to show trends.</div>
-          )}
-        </div>
-      </div>
-
-      <div style={{ marginTop:28 }}>
-        <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.12em", marginBottom:12 }}>RAW CROSSTAB DATA</div>
-        <div style={{ overflowX:"auto" }}>
-          <table style={{ borderCollapse:"collapse", fontFamily:"monospace", fontSize:12, width:"100%" }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Poll</th>
-                <th style={thStyle}>Date</th>
-                <th style={{ ...thStyle, color: candidate.color }}>Overall</th>
-                {demoGroups.map(g => <th key={g} style={thStyle}>{g}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {[...polls].filter(p=>p.crosstabs?.[candidate.id]).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => {
-                const ct = p.crosstabs[candidate.id][activeCategory] || {};
-                return (
-                  <tr key={p.id} style={{ borderBottom:"1px solid #1a1a22" }}>
-                    <td style={tdStyle}>{p.pollster}</td>
-                    <td style={{ ...tdStyle, color:"#888" }}>{formatDate(p.date)}</td>
-                    <td style={{ ...tdStyle, color: candidate.color, fontWeight:"bold" }}>{p[candidate.id]}%</td>
-                    {demoGroups.map(g => <td key={g} style={tdStyle}>{ct[g] != null ? `${ct[g]}%` : "—"}</td>)}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+      <div>
+        <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.12em",marginBottom:12}}>TREND BY GROUP</div>
+        {trendData.length>=2&&demoGroups.length>0?(<><ResponsiveContainer width="100%" height={220}><LineChart data={trendData} margin={{top:4,right:16,left:0,bottom:4}}><CartesianGrid strokeDasharray="3 3" stroke="#1a1a22"/><XAxis dataKey="label" tick={{fill:"#555",fontSize:9,fontFamily:"monospace"}} tickLine={false}/><YAxis tick={{fill:"#555",fontSize:10,fontFamily:"monospace"}} tickLine={false} unit="%" domain={[0,"auto"]}/><Tooltip contentStyle={{background:"#111118",border:"1px solid #333",fontFamily:"monospace",fontSize:11}} formatter={(v,n)=>[`${v}%`,n]}/>{demoGroups.map((g,i)=><Line key={g} type="monotone" dataKey={g} stroke={GROUP_COLORS[i%GROUP_COLORS.length]} strokeWidth={2} dot={{r:3}} connectNulls/>)}</LineChart></ResponsiveContainer><div style={{display:"flex",gap:12,flexWrap:"wrap",marginTop:8}}>{demoGroups.map((g,i)=><span key={g} style={{fontSize:10,fontFamily:"monospace",color:GROUP_COLORS[i%GROUP_COLORS.length]}}>● {g}</span>)}</div></>):<div style={{color:"#444",fontFamily:"monospace",fontSize:12,padding:"20px 0"}}>Need 2+ polls with crosstab data.</div>}
       </div>
     </div>
-  );
+    <div style={{marginTop:28}}>
+      <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.12em",marginBottom:12}}>RAW CROSSTAB DATA</div>
+      <div style={{overflowX:"auto"}}><table style={{borderCollapse:"collapse",fontFamily:"monospace",fontSize:12,width:"100%"}}><thead><tr><th style={thStyle}>Poll</th><th style={thStyle}>State</th><th style={thStyle}>Date</th><th style={{...thStyle,color:candidate.color}}>Overall</th>{demoGroups.map(g=><th key={g} style={thStyle}>{g}</th>)}</tr></thead><tbody>{[...pollsWithData].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p=>{const ct=p.crosstabs[candidate.id][activeCategory]||{};return(<tr key={p.id} style={{borderBottom:"1px solid #1a1a22"}}><td style={tdStyle}>{p.pollster}</td><td style={{...tdStyle,color:p.state==="National"?"#888":"#e9c46a"}}>{p.state||"National"}</td><td style={{...tdStyle,color:"#888"}}>{formatDate(p.date)}</td><td style={{...tdStyle,color:candidate.color,fontWeight:"bold"}}>{p[candidate.id]}%</td>{demoGroups.map(g=><td key={g} style={tdStyle}>{ct[g]!=null?`${ct[g]}%`:"—"}</td>)}</tr>);})}</tbody></table></div>
+    </div>
+  </div>);
 }
-
-export default function PollingTracker() {
-  const [polls, setPolls]               = useState([]);
-  const [loaded, setLoaded]             = useState(false);
-  const [lastUpdated, setLastUpdated]   = useState(null);
-  const [showForm, setShowForm]         = useState(false);
-  const [form, setForm]                 = useState(EMPTY_POLL);
-  const [activeTab, setActiveTab]       = useState("chart");
-  const [visibleCands, setVisibleCands] = useState(CANDIDATES.map(c => c.id));
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [manualPolls, setManualPolls]   = useState([]);
-  const [crosstabCandidate, setCrosstabCandidate] = useState("harris");
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/polls.json?t=" + Date.now());
-        const data = await res.json();
-        setPolls(data);
-        setLastUpdated(new Date().toLocaleDateString());
-      } catch { setPolls([]); }
-      try {
-        const saved = localStorage.getItem("manual-polls-2028");
-        if (saved) setManualPolls(JSON.parse(saved));
-      } catch {}
-      setLoaded(true);
-    }
-    load();
-  }, []);
-
-  const allPolls = useMemo(() => [...polls, ...manualPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)), [polls, manualPolls]);
-
-  function addManualPoll() {
-    const newPoll = { ...form, id:`manual-${Date.now()}` };
-    const updated = [...manualPolls, newPoll];
-    setManualPolls(updated);
-    localStorage.setItem("manual-polls-2028", JSON.stringify(updated));
-    setForm(EMPTY_POLL);
-    setShowForm(false);
-  }
-
-  function deleteManualPoll(id) {
-    const updated = manualPolls.filter(p => p.id !== id);
-    setManualPolls(updated);
-    localStorage.setItem("manual-polls-2028", JSON.stringify(updated));
-    setDeleteConfirm(null);
-  }
-
-  const averages = useMemo(() =>
-    CANDIDATES.map(c => ({ ...c, avg: weightedAverage(allPolls, c.id) }))
-      .filter(c => c.avg !== null)
-      .sort((a,b) => parseFloat(b.avg)-parseFloat(a.avg)),
-  [allPolls]);
-
-  const chartData = useMemo(() =>
-    [...allPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(p => {
-      const row = { date:p.date, label:formatDate(p.date), pollster:p.pollster };
-      CANDIDATES.forEach(c => { row[c.id] = parseFloat(p[c.id]) || null; });
-      return row;
-    }),
-  [allPolls]);
-
-  const formValid = form.pollster && form.date && CANDIDATES.some(c => form[c.id]);
-  const selectedCrosstabCand = CANDIDATES.find(c => c.id === crosstabCandidate) || CANDIDATES[0];
-
-  if (!loaded) return (
-    <div style={{ background:"#0a0a0f", minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontFamily:"Georgia, serif", fontSize:18 }}>
-      Loading tracker...
-    </div>
-  );
-
-  return (
-    <div style={{ background:"#0a0a0f", minHeight:"100vh", color:"#e8e6df", fontFamily:"'Georgia','Times New Roman',serif" }}>
-      <div style={{ borderBottom:"3px solid #1a6bff", padding:"28px 36px 18px" }}>
-        <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
-          <div>
-            <div style={{ fontSize:11, letterSpacing:"0.2em", textTransform:"uppercase", color:"#1a6bff", fontFamily:"monospace", marginBottom:4 }}>2028 Presidential Primary</div>
-            <h1 style={{ margin:0, fontSize:"clamp(22px,4vw,36px)", fontWeight:"bold", letterSpacing:"-0.02em", lineHeight:1.1 }}>
-              Democratic Primary<br/><span style={{ color:"#1a6bff" }}>Polling Tracker</span>
-            </h1>
-          </div>
-          <button onClick={()=>setShowForm(!showForm)} style={{ background:showForm?"#333":"#1a6bff", color:"#fff", border:"none", padding:"10px 20px", cursor:"pointer", fontFamily:"monospace", fontSize:13, letterSpacing:"0.05em", fontWeight:"bold" }}>
-            {showForm?"✕ CANCEL":"+ ADD POLL"}
-          </button>
-        </div>
-        <div style={{ marginTop:10, fontSize:12, color:"#888", fontFamily:"monospace", display:"flex", gap:24, flexWrap:"wrap" }}>
-          <span>{allPolls.length} poll{allPolls.length!==1?"s":""} tracked · Apr 2025–present</span>
-          <span style={{ color:"#2a9d8f" }}>⟳ Auto-updated daily via GitHub Actions</span>
-          {lastUpdated && <span>Last loaded: {lastUpdated}</span>}
-        </div>
+export default function PollingTracker(){
+  const [polls,setPolls]=useState([]);
+  const [loaded,setLoaded]=useState(false);
+  const [lastUpdated,setLastUpdated]=useState(null);
+  const [showForm,setShowForm]=useState(false);
+  const [form,setForm]=useState(EMPTY_POLL);
+  const [activeTab,setActiveTab]=useState("chart");
+  const [visibleCands,setVisibleCands]=useState(CANDIDATES.map(c=>c.id));
+  const [deleteConfirm,setDeleteConfirm]=useState(null);
+  const [manualPolls,setManualPolls]=useState([]);
+  const [crosstabCandidate,setCrosstabCandidate]=useState("harris");
+  const [stateFilter,setStateFilter]=useState("All");
+  useEffect(()=>{async function load(){try{const res=await fetch("/polls.json?t="+Date.now());const data=await res.json();setPolls(data);setLastUpdated(new Date().toLocaleDateString());}catch{setPolls([]);}try{const saved=localStorage.getItem("manual-polls-2028");if(saved)setManualPolls(JSON.parse(saved));}catch{}setLoaded(true);}load();},[]);
+  const allPolls=useMemo(()=>[...polls,...manualPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)),[polls,manualPolls]);
+  const allStates=useMemo(()=>{const states=[...new Set(allPolls.map(p=>p.state||"National"))].sort();return["All","National",...states.filter(s=>s!=="National")];},[allPolls]);
+  const filteredPolls=useMemo(()=>stateFilter==="All"?allPolls:allPolls.filter(p=>(p.state||"National")===stateFilter),[allPolls,stateFilter]);
+  function addManualPoll(){const newPoll={...form,id:`manual-${Date.now()}`,state:form.state||"National"};const updated=[...manualPolls,newPoll];setManualPolls(updated);localStorage.setItem("manual-polls-2028",JSON.stringify(updated));setForm(EMPTY_POLL);setShowForm(false);}
+  function deleteManualPoll(id){const updated=manualPolls.filter(p=>p.id!==id);setManualPolls(updated);localStorage.setItem("manual-polls-2028",JSON.stringify(updated));setDeleteConfirm(null);}
+  const averages=useMemo(()=>CANDIDATES.map(c=>({...c,avg:weightedAverage(filteredPolls,c.id)})).filter(c=>c.avg!==null).sort((a,b)=>parseFloat(b.avg)-parseFloat(a.avg)),[filteredPolls]);
+  const chartData=useMemo(()=>[...filteredPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(p=>{const row={label:`${formatDate(p.date)}${p.state&&p.state!=="National"?` (${p.state})`:""}`,pollster:p.pollster,state:p.state};CANDIDATES.forEach(c=>{row[c.id]=parseFloat(p[c.id])||null;});return row;}),[filteredPolls]);
+  const formValid=form.pollster&&form.date&&CANDIDATES.some(c=>form[c.id]);
+  const selectedCrosstabCand=CANDIDATES.find(c=>c.id===crosstabCandidate)||CANDIDATES[0];
+  const nationalCount=allPolls.filter(p=>(p.state||"National")==="National").length;
+  const stateCount=allPolls.filter(p=>p.state&&p.state!=="National").length;
+  if(!loaded)return(<div style={{background:"#0a0a0f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontFamily:"Georgia,serif",fontSize:18}}>Loading tracker...</div>);
+  return(<div style={{background:"#0a0a0f",minHeight:"100vh",color:"#e8e6df",fontFamily:"'Georgia','Times New Roman',serif"}}>
+    <div style={{borderBottom:"3px solid #1a6bff",padding:"28px 36px 18px"}}>
+      <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
+        <div><div style={{fontSize:11,letterSpacing:"0.2em",textTransform:"uppercase",color:"#1a6bff",fontFamily:"monospace",marginBottom:4}}>2028 Presidential Primary</div><h1 style={{margin:0,fontSize:"clamp(22px,4vw,36px)",fontWeight:"bold",letterSpacing:"-0.02em",lineHeight:1.1}}>Democratic Primary<br/><span style={{color:"#1a6bff"}}>Polling Tracker</span></h1></div>
+        <button onClick={()=>setShowForm(!showForm)} style={{background:showForm?"#333":"#1a6bff",color:"#fff",border:"none",padding:"10px 20px",cursor:"pointer",fontFamily:"monospace",fontSize:13,letterSpacing:"0.05em",fontWeight:"bold"}}>{showForm?"✕ CANCEL":"+ ADD POLL"}</button>
       </div>
-
-      {showForm && (
-        <div style={{ background:"#111118", borderBottom:"1px solid #222", padding:"24px 36px" }}>
-          <div style={{ fontSize:13, fontFamily:"monospace", color:"#1a6bff", marginBottom:16, letterSpacing:"0.1em" }}>MANUAL POLL ENTRY</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:12, marginBottom:16 }}>
-            <div><label style={labelStyle}>Pollster</label><input value={form.pollster} onChange={e=>setForm(f=>({...f,pollster:e.target.value}))} style={inputStyle} placeholder="e.g. Harvard Harris"/></div>
-            <div><label style={labelStyle}>Date</label><input type="date" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} style={inputStyle}/></div>
-            <div><label style={labelStyle}>Sample Size</label><input type="number" value={form.sampleSize} onChange={e=>setForm(f=>({...f,sampleSize:e.target.value}))} style={inputStyle} placeholder="e.g. 1200"/></div>
-          </div>
-          <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", marginBottom:8, letterSpacing:"0.1em" }}>CANDIDATE NUMBERS (%) — leave blank if not polled</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:10 }}>
-            {CANDIDATES.map(c=>(
-              <div key={c.id}>
-                <label style={{ ...labelStyle, color:c.color }}>{c.short}</label>
-                <input type="number" value={form[c.id]} onChange={e=>setForm(f=>({...f,[c.id]:e.target.value}))} style={{ ...inputStyle, borderColor:form[c.id]?c.color:"#333" }} placeholder="%" min="0" max="100"/>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop:16 }}>
-            <button onClick={addManualPoll} disabled={!formValid} style={{ background:formValid?"#1a6bff":"#333", color:formValid?"#fff":"#666", border:"none", padding:"10px 28px", cursor:formValid?"pointer":"not-allowed", fontFamily:"monospace", fontSize:13, fontWeight:"bold", letterSpacing:"0.1em" }}>SAVE POLL</button>
-          </div>
-        </div>
-      )}
-
-      <div style={{ padding:"24px 36px 0", overflowX:"auto" }}>
-        <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.15em", marginBottom:14 }}>WEIGHTED POLLING AVERAGE · click to toggle on chart</div>
-        <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
-          {averages.map((c,i) => (
-            <div key={c.id} onClick={()=>setVisibleCands(prev=>prev.includes(c.id)?prev.filter(x=>x!==c.id):[...prev,c.id])}
-              style={{ background:i===0?`${c.color}20`:"#111118", border:`1px solid ${i===0?c.color:"#222"}`, padding:"14px 18px", minWidth:110, cursor:"pointer", opacity:visibleCands.includes(c.id)?1:0.35, transition:"all 0.15s" }}>
-              <div style={{ fontSize:10, color:c.color, fontFamily:"monospace", letterSpacing:"0.1em", marginBottom:4 }}>{i===0?"● LEADER":`#${i+1}`}</div>
-              <div style={{ fontSize:24, fontWeight:"bold", color:c.color, lineHeight:1 }}>{c.avg}%</div>
-              <div style={{ fontSize:12, color:"#aaa", marginTop:4 }}>{c.short}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ padding:"24px 36px 0", display:"flex", gap:0, borderBottom:"1px solid #222", marginTop:24 }}>
-        {["chart","table","crosstabs"].map(tab=>(
-          <button key={tab} onClick={()=>setActiveTab(tab)} style={{ background:"none", border:"none", borderBottom:activeTab===tab?"2px solid #1a6bff":"2px solid transparent", color:activeTab===tab?"#e8e6df":"#666", padding:"8px 20px", cursor:"pointer", fontFamily:"monospace", fontSize:12, letterSpacing:"0.1em", textTransform:"uppercase" }}>
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {activeTab==="chart" && (
-        <div style={{ padding:"24px 36px" }}>
-          <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.15em", marginBottom:6 }}>POLLING TRENDS · Apr 2025–present</div>
-          {chartData.length < 2
-            ? <div style={{ color:"#555", fontFamily:"monospace", fontSize:13, padding:"40px 0" }}>Add at least 2 polls to see trend lines.</div>
-            : <ResponsiveContainer width="100%" height={380}>
-                <LineChart data={chartData} margin={{ top:10, right:20, left:0, bottom:10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1a1a22"/>
-                  <XAxis dataKey="label" tick={{ fill:"#666", fontSize:11, fontFamily:"monospace" }} tickLine={false}/>
-                  <YAxis tick={{ fill:"#666", fontSize:11, fontFamily:"monospace" }} tickLine={false} unit="%" domain={[0,"auto"]}/>
-                  <Tooltip contentStyle={{ background:"#111118", border:"1px solid #333", fontFamily:"monospace", fontSize:12 }} labelStyle={{ color:"#aaa", marginBottom:6 }} formatter={(val,name)=>{ const c=CANDIDATES.find(c=>c.id===name); return [`${val}%`,c?.short||name]; }}/>
-                  {CANDIDATES.filter(c=>visibleCands.includes(c.id)).map(c=>(
-                    <Line key={c.id} type="monotone" dataKey={c.id} stroke={c.color} strokeWidth={2} dot={{ r:4, fill:c.color, strokeWidth:0 }} connectNulls activeDot={{ r:6 }}/>
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
-          }
-        </div>
-      )}
-
-      {activeTab==="table" && (
-        <div style={{ padding:"24px 36px", overflowX:"auto" }}>
-          <table style={{ borderCollapse:"collapse", width:"100%", fontFamily:"monospace", fontSize:12 }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Date</th><th style={thStyle}>Pollster</th><th style={thStyle}>N</th>
-                {CANDIDATES.map(c=><th key={c.id} style={{ ...thStyle, color:c.color }}>{c.short}</th>)}
-                <th style={thStyle}>Crosstabs</th><th style={thStyle}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...allPolls].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p=>{
-                const isManual = p.id?.startsWith("manual-");
-                const hasCrosstabs = !!p.crosstabs;
-                return (
-                  <tr key={p.id} style={{ borderBottom:"1px solid #1a1a22" }}>
-                    <td style={tdStyle}>{formatDate(p.date)}</td>
-                    <td style={tdStyle}>{p.pollster}{isManual&&<span style={{ fontSize:9, color:"#555", marginLeft:6 }}>manual</span>}</td>
-                    <td style={{ ...tdStyle, color:"#666" }}>{p.sampleSize?Number(p.sampleSize).toLocaleString():"—"}</td>
-                    {CANDIDATES.map(c=>{
-                      const val=parseFloat(p[c.id]);
-                      const isLeader=!isNaN(val)&&CANDIDATES.every(o=>o.id===c.id||isNaN(parseFloat(p[o.id]))||parseFloat(p[o.id])<=val);
-                      return <td key={c.id} style={{ ...tdStyle, color:!isNaN(val)?(isLeader?c.color:"#e8e6df"):"#333", fontWeight:isLeader?"bold":"normal" }}>{!isNaN(val)?`${val}%`:"—"}</td>;
-                    })}
-                    <td style={tdStyle}>
-                      {hasCrosstabs
-                        ? <span style={{ color:"#2a9d8f", fontSize:11, cursor:"pointer" }} onClick={()=>setActiveTab("crosstabs")}>✓ view</span>
-                        : <span style={{ color:"#333", fontSize:11 }}>—</span>}
-                    </td>
-                    <td style={tdStyle}>
-                      {isManual&&(deleteConfirm===p.id
-                        ?<span><span style={{ color:"#e63946", cursor:"pointer", marginRight:8 }} onClick={()=>deleteManualPoll(p.id)}>confirm</span><span style={{ color:"#666", cursor:"pointer" }} onClick={()=>setDeleteConfirm(null)}>cancel</span></span>
-                        :<span style={{ color:"#444", cursor:"pointer" }} onClick={()=>setDeleteConfirm(p.id)}>✕</span>)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr style={{ borderTop:"2px solid #333" }}>
-                <td colSpan={3} style={{ ...tdStyle, color:"#1a6bff", letterSpacing:"0.1em" }}>AVERAGE</td>
-                {CANDIDATES.map(c=><td key={c.id} style={{ ...tdStyle, color:c.color, fontWeight:"bold" }}>{weightedAverage(allPolls,c.id)?`${weightedAverage(allPolls,c.id)}%`:"—"}</td>)}
-                <td colSpan={2} style={tdStyle}></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
-
-      {activeTab==="crosstabs" && (
-        <div style={{ padding:"24px 36px" }}>
-          <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.15em", marginBottom:16 }}>DEMOGRAPHIC CROSSTABS · select a candidate</div>
-          <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:28 }}>
-            {CANDIDATES.map(c => {
-              const hasCT = allPolls.some(p => p.crosstabs?.[c.id]);
-              return (
-                <button key={c.id} onClick={()=>hasCT&&setCrosstabCandidate(c.id)} style={{
-                  background: crosstabCandidate===c.id?`${c.color}25`:"#111118",
-                  border:`1px solid ${crosstabCandidate===c.id?c.color:"#333"}`,
-                  color: hasCT?c.color:"#444",
-                  padding:"8px 16px", cursor:hasCT?"pointer":"default",
-                  fontFamily:"monospace", fontSize:12, letterSpacing:"0.05em",
-                  opacity:hasCT?1:0.4,
-                }}>
-                  {c.short}{hasCT&&<span style={{ fontSize:9, marginLeft:6, opacity:0.7 }}>● data</span>}
-                </button>
-              );
-            })}
-          </div>
-          <div style={{ marginBottom:20, paddingBottom:16, borderBottom:"1px solid #1a1a22" }}>
-            <span style={{ fontSize:22, fontWeight:"bold", color:selectedCrosstabCand.color }}>{selectedCrosstabCand.name}</span>
-            <span style={{ fontSize:13, color:"#666", fontFamily:"monospace", marginLeft:16 }}>avg {weightedAverage(allPolls, selectedCrosstabCand.id)}% overall</span>
-          </div>
-          <CrosstabsPanel polls={allPolls} candidate={selectedCrosstabCand} />
-        </div>
-      )}
-
-      <div style={{ padding:"16px 36px 32px", borderTop:"1px solid #1a1a22", marginTop:8 }}>
-        <div style={{ fontSize:11, color:"#444", fontFamily:"monospace" }}>
-          Polls tracked from Apr 1, 2025 · Auto-fetched daily via GitHub Actions + Anthropic API · Weighted by recency (60-day half-life) × sample size · No candidates formally declared as of Feb 2026
-        </div>
+      <div style={{marginTop:10,fontSize:12,color:"#888",fontFamily:"monospace",display:"flex",gap:24,flexWrap:"wrap"}}>
+        <span>{nationalCount} national · {stateCount} state polls · Apr 2025–present</span>
+        <span style={{color:"#2a9d8f"}}>⟳ Auto-updated daily via GitHub Actions</span>
+        {lastUpdated&&<span>Last loaded: {lastUpdated}</span>}
       </div>
     </div>
-  );
+    {showForm&&(<div style={{background:"#111118",borderBottom:"1px solid #222",padding:"24px 36px"}}>
+      <div style={{fontSize:13,fontFamily:"monospace",color:"#1a6bff",marginBottom:16,letterSpacing:"0.1em"}}>MANUAL POLL ENTRY</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12,marginBottom:16}}>
+        <div><label style={labelStyle}>Pollster</label><input value={form.pollster} onChange={e=>setForm(f=>({...f,pollster:e.target.value}))} style={inputStyle} placeholder="e.g. Harvard Harris"/></div>
+        <div><label style={labelStyle}>Date</label><input type="date" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} style={inputStyle}/></div>
+        <div><label style={labelStyle}>State</label><input value={form.state} onChange={e=>setForm(f=>({...f,state:e.target.value}))} style={inputStyle} placeholder="National or state name"/></div>
+        <div><label style={labelStyle}>Sample Size</label><input type="number" value={form.sampleSize} onChange={e=>setForm(f=>({...f,sampleSize:e.target.value}))} style={inputStyle} placeholder="e.g. 1200"/></div>
+      </div>
+      <div style={{fontSize:11,color:"#666",fontFamily:"monospace",marginBottom:8,letterSpacing:"0.1em"}}>CANDIDATE NUMBERS (%) — leave blank if not polled</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))",gap:10}}>
+        {CANDIDATES.map(c=>(<div key={c.id}><label style={{...labelStyle,color:c.color}}>{c.short}</label><input type="number" value={form[c.id]} onChange={e=>setForm(f=>({...f,[c.id]:e.target.value}))} style={{...inputStyle,borderColor:form[c.id]?c.color:"#333"}} placeholder="%" min="0" max="100"/></div>))}
+      </div>
+      <div style={{marginTop:16}}><button onClick={addManualPoll} disabled={!formValid} style={{background:formValid?"#1a6bff":"#333",color:formValid?"#fff":"#666",border:"none",padding:"10px 28px",cursor:formValid?"pointer":"not-allowed",fontFamily:"monospace",fontSize:13,fontWeight:"bold",letterSpacing:"0.1em"}}>SAVE POLL</button></div>
+    </div>)}
+    <div style={{padding:"20px 36px 0",overflowX:"auto"}}>
+      <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.15em",marginBottom:10}}>FILTER BY STATE</div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+        {allStates.map(s=>(<button key={s} onClick={()=>setStateFilter(s)} style={{background:stateFilter===s?"#1a6bff":"#111118",border:`1px solid ${stateFilter===s?"#1a6bff":"#333"}`,color:stateFilter===s?"#fff":"#888",padding:"5px 14px",cursor:"pointer",fontFamily:"monospace",fontSize:11,letterSpacing:"0.05em",whiteSpace:"nowrap"}}>{s}</button>))}
+      </div>
+    </div>
+    <div style={{padding:"20px 36px 0",overflowX:"auto"}}>
+      <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.15em",marginBottom:14}}>WEIGHTED POLLING AVERAGE {stateFilter!=="All"?`· ${stateFilter} only`:""} · click to toggle on chart</div>
+      <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
+        {averages.map((c,i)=>(<div key={c.id} onClick={()=>setVisibleCands(prev=>prev.includes(c.id)?prev.filter(x=>x!==c.id):[...prev,c.id])} style={{background:i===0?`${c.color}20`:"#111118",border:`1px solid ${i===0?c.color:"#222"}`,padding:"14px 18px",minWidth:110,cursor:"pointer",opacity:visibleCands.includes(c.id)?1:0.35,transition:"all 0.15s"}}><div style={{fontSize:10,color:c.color,fontFamily:"monospace",letterSpacing:"0.1em",marginBottom:4}}>{i===0?"● LEADER":`#${i+1}`}</div><div style={{fontSize:24,fontWeight:"bold",color:c.color,lineHeight:1}}>{c.avg}%</div><div style={{fontSize:12,color:"#aaa",marginTop:4}}>{c.short}</div></div>))}
+        {averages.length===0&&<div style={{color:"#555",fontFamily:"monospace",fontSize:13}}>No polls for this state yet.</div>}
+      </div>
+    </div>
+    <div style={{padding:"24px 36px 0",display:"flex",gap:0,borderBottom:"1px solid #222",marginTop:24}}>
+      {["chart","table","crosstabs"].map(tab=>(<button key={tab} onClick={()=>setActiveTab(tab)} style={{background:"none",border:"none",borderBottom:activeTab===tab?"2px solid #1a6bff":"2px solid transparent",color:activeTab===tab?"#e8e6df":"#666",padding:"8px 20px",cursor:"pointer",fontFamily:"monospace",fontSize:12,letterSpacing:"0.1em",textTransform:"uppercase"}}>{tab}</button>))}
+    </div>
+    {activeTab==="chart"&&(<div style={{padding:"24px 36px"}}>
+      <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.15em",marginBottom:6}}>POLLING TRENDS · {stateFilter==="All"?"All polls":stateFilter} · Apr 2025–present</div>
+      {chartData.length<2?<div style={{color:"#555",fontFamily:"monospace",fontSize:13,padding:"40px 0"}}>Need at least 2 polls. Try selecting "All" above.</div>:<ResponsiveContainer width="100%" height={400}><LineChart data={chartData} margin={{top:10,right:20,left:0,bottom:10}}><CartesianGrid strokeDasharray="3 3" stroke="#1a1a22"/><XAxis dataKey="label" tick={{fill:"#666",fontSize:10,fontFamily:"monospace"}} tickLine={false}/><YAxis tick={{fill:"#666",fontSize:11,fontFamily:"monospace"}} tickLine={false} unit="%" domain={[0,"auto"]}/><Tooltip contentStyle={{background:"#111118",border:"1px solid #333",fontFamily:"monospace",fontSize:12}} labelStyle={{color:"#aaa",marginBottom:6}} formatter={(val,name)=>{const c=CANDIDATES.find(c=>c.id===name);return[`${val}%`,c?.short||name];}}/>{CANDIDATES.filter(c=>visibleCands.includes(c.id)).map(c=>(<Line key={c.id} type="monotone" dataKey={c.id} stroke={c.color} strokeWidth={2} dot={{r:4,fill:c.color,strokeWidth:0}} connectNulls activeDot={{r:6}}/>))}</LineChart></ResponsiveContainer>}
+    </div>)}
+    {activeTab==="table"&&(<div style={{padding:"24px 36px",overflowX:"auto"}}>
+      <table style={{borderCollapse:"collapse",width:"100%",fontFamily:"monospace",fontSize:12}}>
+        <thead><tr><th style={thStyle}>Date</th><th style={thStyle}>Pollster</th><th style={{...thStyle,color:"#e9c46a"}}>State</th><th style={thStyle}>N</th>{CANDIDATES.map(c=><th key={c.id} style={{...thStyle,color:c.color}}>{c.short}</th>)}<th style={thStyle}>Crosstabs</th><th style={thStyle}></th></tr></thead>
+        <tbody>{[...filteredPolls].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p=>{const isManual=p.id?.startsWith("manual-");const hasCrosstabs=!!p.crosstabs;const isState=p.state&&p.state!=="National";return(<tr key={p.id} style={{borderBottom:"1px solid #1a1a22"}}><td style={tdStyle}>{formatDate(p.date)}</td><td style={tdStyle}>{p.pollster}{isManual&&<span style={{fontSize:9,color:"#555",marginLeft:6}}>manual</span>}</td><td style={{...tdStyle,color:isState?"#e9c46a":"#666"}}>{p.state||"National"}</td><td style={{...tdStyle,color:"#666"}}>{p.sampleSize?Number(p.sampleSize).toLocaleString():"—"}</td>{CANDIDATES.map(c=>{const val=parseFloat(p[c.id]);const isLeader=!isNaN(val)&&CANDIDATES.every(o=>o.id===c.id||isNaN(parseFloat(p[o.id]))||parseFloat(p[o.id])<=val);return<td key={c.id} style={{...tdStyle,color:!isNaN(val)?(isLeader?c.color:"#e8e6df"):"#333",fontWeight:isLeader?"bold":"normal"}}>{!isNaN(val)?`${val}%`:"—"}</td>;})}<td style={tdStyle}>{hasCrosstabs?<span style={{color:"#2a9d8f",fontSize:11,cursor:"pointer"}} onClick={()=>setActiveTab("crosstabs")}>✓ view</span>:<span style={{color:"#333",fontSize:11}}>—</span>}</td><td style={tdStyle}>{isManual&&(deleteConfirm===p.id?<span><span style={{color:"#e63946",cursor:"pointer",marginRight:8}} onClick={()=>deleteManualPoll(p.id)}>confirm</span><span style={{color:"#666",cursor:"pointer"}} onClick={()=>setDeleteConfirm(null)}>cancel</span></span>:<span style={{color:"#444",cursor:"pointer"}} onClick={()=>setDeleteConfirm(p.id)}>✕</span>)}</td></tr>);})}</tbody>
+        <tfoot><tr style={{borderTop:"2px solid #333"}}><td colSpan={4} style={{...tdStyle,color:"#1a6bff",letterSpacing:"0.1em"}}>AVG {stateFilter!=="All"?`(${stateFilter})`:""}</td>{CANDIDATES.map(c=><td key={c.id} style={{...tdStyle,color:c.color,fontWeight:"bold"}}>{weightedAverage(filteredPolls,c.id)?`${weightedAverage(filteredPolls,c.id)}%`:"—"}</td>)}<td colSpan={2} style={tdStyle}></td></tr></tfoot>
+      </table>
+    </div>)}
+    {activeTab==="crosstabs"&&(<div style={{padding:"24px 36px"}}>
+      <div style={{fontSize:11,color:"#666",fontFamily:"monospace",letterSpacing:"0.15em",marginBottom:16}}>DEMOGRAPHIC CROSSTABS · {stateFilter==="All"?"All polls":stateFilter} · select a candidate</div>
+      <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:28}}>
+        {CANDIDATES.map(c=>{const hasCT=filteredPolls.some(p=>p.crosstabs?.[c.id]);return(<button key={c.id} onClick={()=>hasCT&&setCrosstabCandidate(c.id)} style={{background:crosstabCandidate===c.id?`${c.color}25`:"#111118",border:`1px solid ${crosstabCandidate===c.id?c.color:"#333"}`,color:hasCT?c.color:"#444",padding:"8px 16px",cursor:hasCT?"pointer":"default",fontFamily:"monospace",fontSize:12,letterSpacing:"0.05em",opacity:hasCT?1:0.4}}>{c.short}{hasCT&&<span style={{fontSize:9,marginLeft:6,opacity:0.7}}>● data</span>}</button>);})}
+      </div>
+      <div style={{marginBottom:20,paddingBottom:16,borderBottom:"1px solid #1a1a22"}}>
+        <span style={{fontSize:22,fontWeight:"bold",color:selectedCrosstabCand.color}}>{selectedCrosstabCand.name}</span>
+        <span style={{fontSize:13,color:"#666",fontFamily:"monospace",marginLeft:16}}>avg {weightedAverage(filteredPolls,selectedCrosstabCand.id)||"—"}% · {stateFilter==="All"?"all polls":stateFilter}</span>
+      </div>
+      <CrosstabsPanel polls={filteredPolls} candidate={selectedCrosstabCand}/>
+    </div>)}
+    <div style={{padding:"16px 36px 32px",borderTop:"1px solid #1a1a22",marginTop:8}}>
+      <div style={{fontSize:11,color:"#444",fontFamily:"monospace"}}>Polls tracked from Apr 1, 2025 · National + state-level · Auto-fetched daily via GitHub Actions · Weighted by recency × sample size</div>
+    </div>
+  </div>);
 }
