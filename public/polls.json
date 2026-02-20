@@ -168,9 +168,9 @@
         }
       }
     },
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2026-02-natl",
@@ -461,8 +461,8 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -754,9 +754,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": 2,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "jl-partners-2026-02-natl",
@@ -1017,9 +1017,9 @@
         }
       }
     },
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "harvard-harris-2026-02-natl",
@@ -1220,9 +1220,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": 2,
+    "slotkin": null,
+    "sanders": 3
   },
   {
     "id": "il-poll-2026-01-il",
@@ -1513,9 +1513,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "mclaughlin-2026-01-natl",
@@ -1776,9 +1776,9 @@
         }
       }
     },
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "winthrop-2026-01-sc",
@@ -2039,9 +2039,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2026-01-natl",
@@ -2332,8 +2332,8 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -2625,9 +2625,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-12-natl",
@@ -2918,8 +2918,8 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -3241,9 +3241,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "suffolk-2025-12-nh",
@@ -3564,9 +3564,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "epic-mra-2025-12-mi",
@@ -3887,9 +3887,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "yougov-2025-11-natl",
@@ -4180,9 +4180,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "uga-2025-11-ga",
@@ -4503,9 +4503,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "emerson-2025-11-natl",
@@ -4706,9 +4706,9 @@
         }
       }
     },
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-11-natl",
@@ -4999,8 +4999,8 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -5202,9 +5202,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "franklin-marshall-2025-11-pa",
@@ -5525,9 +5525,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "mc-2025-11-natl",
@@ -5758,9 +5758,9 @@
         }
       }
     },
-    "moore": 1,
-    "slotkin": 0,
-    "sanders": 2
+    "moore": null,
+    "slotkin": null,
+    "sanders": 3
   },
   {
     "id": "high-point-2025-11-nc",
@@ -6081,9 +6081,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "clemson-2025-11-sc",
@@ -6344,9 +6344,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "ut-texas-2025-10-tx",
@@ -6637,9 +6637,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-10-natl",
@@ -6930,8 +6930,8 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -7253,9 +7253,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "unh-2025-10-nh",
@@ -7576,9 +7576,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "yougov-2025-10-natl",
@@ -7899,9 +7899,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "emerson-2025-10-ia",
@@ -8222,9 +8222,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "nevada-ind-2025-09-nv",
@@ -8515,9 +8515,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "il-poll-2025-09-il",
@@ -8808,9 +8808,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-09-natl",
@@ -9101,8 +9101,8 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -9424,9 +9424,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "fau-2025-09-fl",
@@ -9747,9 +9747,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "emerson-2025-08-natl",
@@ -10070,9 +10070,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "mc-2025-08-natl",
@@ -10273,9 +10273,9 @@
         }
       }
     },
-    "moore": 1,
-    "slotkin": 0,
-    "sanders": 2
+    "moore": null,
+    "slotkin": null,
+    "sanders": 3
   },
   {
     "id": "franklin-marshall-2025-08-pa",
@@ -10596,9 +10596,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "unh-2025-08-nh",
@@ -10919,9 +10919,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-08-natl",
@@ -11182,9 +11182,9 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
-    "sanders": 2
+    "moore": null,
+    "slotkin": null,
+    "sanders": 3
   },
   {
     "id": "uga-2025-08-ga",
@@ -11505,9 +11505,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "dmr-2025-07-ia",
@@ -11828,9 +11828,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "ppic-2025-07-ca",
@@ -12061,9 +12061,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-07-natl",
@@ -12324,9 +12324,9 @@
         }
       }
     },
-    "moore": 2,
-    "slotkin": 0,
-    "sanders": 2
+    "moore": null,
+    "slotkin": null,
+    "sanders": 3
   },
   {
     "id": "winthrop-2025-07-sc",
@@ -12617,9 +12617,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "nevada-ind-2025-06-nv",
@@ -12940,9 +12940,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "mc-2025-06-natl",
@@ -13203,9 +13203,9 @@
         }
       }
     },
-    "moore": 1,
-    "slotkin": 0,
-    "sanders": 2
+    "moore": null,
+    "slotkin": null,
+    "sanders": 3
   },
   {
     "id": "emerson-2025-06-natl",
@@ -13556,8 +13556,8 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 5
   },
   {
@@ -13879,9 +13879,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "unh-2025-05-nh",
@@ -14202,9 +14202,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "quinnipiac-2025-04-natl",
@@ -14495,9 +14495,9 @@
       }
     },
     "source_url": null,
-    "moore": 0,
-    "slotkin": 0,
-    "sanders": 0
+    "moore": null,
+    "slotkin": null,
+    "sanders": null
   },
   {
     "id": "echelon-2025-04-natl",
@@ -14788,8 +14788,8 @@
         }
       }
     },
-    "moore": 1,
-    "slotkin": 0,
+    "moore": null,
+    "slotkin": null,
     "sanders": 3
   },
   {
@@ -14991,8 +14991,8 @@
         }
       }
     },
-    "moore": 1,
-    "slotkin": 0,
-    "sanders": 2
+    "moore": null,
+    "slotkin": null,
+    "sanders": 3
   }
 ]
