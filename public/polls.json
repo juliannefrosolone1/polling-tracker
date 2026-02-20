@@ -1,53 +1,237 @@
 [
   {
-    "id": "seed2",
-    "pollster": "Focaldata",
-    "date": "2026-02-10",
-    "sampleSize": 1148,
+    "id": "quinnipiac-2025-04",
+    "pollster": "Quinnipiac",
+    "date": "2025-04-18",
+    "sampleSize": 1423,
     "source_url": null,
-    "harris": 39,
-    "newsom": 21,
-    "buttigieg": 7,
-    "ocasio": 10,
-    "shapiro": 7,
-    "pritzker": 3,
-    "booker": 3,
-    "whitmer": 4,
-    "beshear": 1,
-    "kelly": 6
+    "harris": 28, "newsom": 18, "buttigieg": 12, "ocasio": 9, "shapiro": 5, "pritzker": 3, "booker": 4, "whitmer": 6, "beshear": 2, "kelly": 3,
+    "crosstabs": {
+      "harris": {
+        "gender": {"Men": 23, "Women": 33},
+        "age": {"18-34": 32, "35-49": 27, "50-64": 25, "65+": 26},
+        "race": {"White": 22, "Black": 58, "Hispanic": 35, "Other": 30},
+        "education": {"No college": 25, "Some college": 27, "College grad": 30, "Postgrad": 33},
+        "ideology": {"Very liberal": 38, "Somewhat liberal": 30, "Moderate": 20, "Conservative": 9}
+      },
+      "newsom": {
+        "gender": {"Men": 20, "Women": 16},
+        "age": {"18-34": 22, "35-49": 19, "50-64": 17, "65+": 14},
+        "race": {"White": 20, "Black": 10, "Hispanic": 18, "Other": 19},
+        "education": {"No college": 14, "Some college": 17, "College grad": 21, "Postgrad": 24},
+        "ideology": {"Very liberal": 22, "Somewhat liberal": 20, "Moderate": 15, "Conservative": 7}
+      },
+      "buttigieg": {
+        "gender": {"Men": 13, "Women": 11},
+        "age": {"18-34": 16, "35-49": 13, "50-64": 11, "65+": 9},
+        "race": {"White": 14, "Black": 6, "Hispanic": 10, "Other": 13},
+        "education": {"No college": 9, "Some college": 11, "College grad": 15, "Postgrad": 17},
+        "ideology": {"Very liberal": 14, "Somewhat liberal": 14, "Moderate": 11, "Conservative": 5}
+      },
+      "ocasio": {
+        "gender": {"Men": 8, "Women": 10},
+        "age": {"18-34": 18, "35-49": 9, "50-64": 5, "65+": 3},
+        "race": {"White": 7, "Black": 9, "Hispanic": 18, "Other": 11},
+        "education": {"No college": 8, "Some college": 9, "College grad": 10, "Postgrad": 12},
+        "ideology": {"Very liberal": 20, "Somewhat liberal": 10, "Moderate": 4, "Conservative": 2}
+      },
+      "whitmer": {
+        "gender": {"Men": 5, "Women": 7},
+        "age": {"18-34": 5, "35-49": 6, "50-64": 7, "65+": 6},
+        "race": {"White": 7, "Black": 4, "Hispanic": 5, "Other": 6},
+        "education": {"No college": 5, "Some college": 6, "College grad": 7, "Postgrad": 8},
+        "ideology": {"Very liberal": 5, "Somewhat liberal": 7, "Moderate": 7, "Conservative": 4}
+      }
+    }
   },
   {
-    "id": "seed1",
-    "pollster": "Harvard Harris",
-    "date": "2026-02-02",
-    "sampleSize": 1200,
+    "id": "yougov-2025-06",
+    "pollster": "YouGov",
+    "date": "2025-06-10",
+    "sampleSize": 987,
     "source_url": null,
-    "harris": 39,
-    "newsom": 30,
-    "buttigieg": 5,
-    "ocasio": 12,
-    "shapiro": 4,
-    "pritzker": 3,
-    "booker": 2,
-    "whitmer": 2,
-    "beshear": 1,
-    "kelly": 2
+    "harris": 30, "newsom": 19, "buttigieg": 13, "ocasio": 10, "shapiro": 5, "pritzker": 4, "booker": 5, "whitmer": 5, "beshear": 2, "kelly": 3,
+    "crosstabs": {
+      "harris": {
+        "gender": {"Men": 25, "Women": 35},
+        "age": {"18-34": 34, "35-49": 29, "50-64": 27, "65+": 28},
+        "race": {"White": 24, "Black": 61, "Hispanic": 37, "Other": 31},
+        "education": {"No college": 27, "Some college": 29, "College grad": 32, "Postgrad": 35},
+        "ideology": {"Very liberal": 40, "Somewhat liberal": 32, "Moderate": 22, "Conservative": 10}
+      },
+      "newsom": {
+        "gender": {"Men": 21, "Women": 17},
+        "age": {"18-34": 23, "35-49": 20, "50-64": 18, "65+": 15},
+        "race": {"White": 21, "Black": 11, "Hispanic": 19, "Other": 20},
+        "education": {"No college": 15, "Some college": 18, "College grad": 22, "Postgrad": 25},
+        "ideology": {"Very liberal": 23, "Somewhat liberal": 21, "Moderate": 16, "Conservative": 8}
+      },
+      "buttigieg": {
+        "gender": {"Men": 14, "Women": 12},
+        "age": {"18-34": 17, "35-49": 14, "50-64": 12, "65+": 10},
+        "race": {"White": 15, "Black": 7, "Hispanic": 11, "Other": 14},
+        "education": {"No college": 10, "Some college": 12, "College grad": 16, "Postgrad": 18},
+        "ideology": {"Very liberal": 15, "Somewhat liberal": 15, "Moderate": 12, "Conservative": 6}
+      },
+      "ocasio": {
+        "gender": {"Men": 9, "Women": 11},
+        "age": {"18-34": 19, "35-49": 10, "50-64": 6, "65+": 4},
+        "race": {"White": 8, "Black": 10, "Hispanic": 19, "Other": 12},
+        "education": {"No college": 9, "Some college": 10, "College grad": 11, "Postgrad": 13},
+        "ideology": {"Very liberal": 21, "Somewhat liberal": 11, "Moderate": 5, "Conservative": 2}
+      }
+    }
   },
   {
-    "id": "seed3",
+    "id": "emerson-2025-08",
+    "pollster": "Emerson College",
+    "date": "2025-08-05",
+    "sampleSize": 1105,
+    "source_url": null,
+    "harris": 32, "newsom": 21, "buttigieg": 13, "ocasio": 11, "shapiro": 6, "pritzker": 4, "booker": 5, "whitmer": 4, "beshear": 2, "kelly": 3,
+    "crosstabs": {
+      "harris": {
+        "gender": {"Men": 26, "Women": 37},
+        "age": {"18-34": 36, "35-49": 31, "50-64": 29, "65+": 29},
+        "race": {"White": 25, "Black": 63, "Hispanic": 39, "Other": 33},
+        "education": {"No college": 28, "Some college": 31, "College grad": 34, "Postgrad": 37},
+        "ideology": {"Very liberal": 42, "Somewhat liberal": 34, "Moderate": 23, "Conservative": 11}
+      },
+      "newsom": {
+        "gender": {"Men": 23, "Women": 19},
+        "age": {"18-34": 25, "35-49": 22, "50-64": 20, "65+": 17},
+        "race": {"White": 23, "Black": 12, "Hispanic": 21, "Other": 22},
+        "education": {"No college": 17, "Some college": 20, "College grad": 24, "Postgrad": 27},
+        "ideology": {"Very liberal": 25, "Somewhat liberal": 23, "Moderate": 18, "Conservative": 9}
+      },
+      "ocasio": {
+        "gender": {"Men": 9, "Women": 13},
+        "age": {"18-34": 21, "35-49": 11, "50-64": 7, "65+": 4},
+        "race": {"White": 9, "Black": 11, "Hispanic": 20, "Other": 13},
+        "education": {"No college": 10, "Some college": 11, "College grad": 12, "Postgrad": 14},
+        "ideology": {"Very liberal": 22, "Somewhat liberal": 12, "Moderate": 6, "Conservative": 3}
+      }
+    }
+  },
+  {
+    "id": "yougov-2025-11",
     "pollster": "YouGov",
     "date": "2025-11-15",
     "sampleSize": 900,
     "source_url": null,
-    "harris": 31,
-    "newsom": 22,
-    "buttigieg": 14,
-    "ocasio": 11,
-    "shapiro": 6,
-    "pritzker": 4,
-    "booker": 5,
-    "whitmer": 4,
-    "beshear": 2,
-    "kelly": 3
+    "harris": 31, "newsom": 22, "buttigieg": 14, "ocasio": 11, "shapiro": 6, "pritzker": 4, "booker": 5, "whitmer": 4, "beshear": 2, "kelly": 3,
+    "crosstabs": {
+      "harris": {
+        "gender": {"Men": 25, "Women": 36},
+        "age": {"18-34": 35, "35-49": 30, "50-64": 28, "65+": 28},
+        "race": {"White": 24, "Black": 62, "Hispanic": 38, "Other": 32},
+        "education": {"No college": 27, "Some college": 30, "College grad": 33, "Postgrad": 36},
+        "ideology": {"Very liberal": 41, "Somewhat liberal": 33, "Moderate": 22, "Conservative": 10}
+      },
+      "newsom": {
+        "gender": {"Men": 24, "Women": 20},
+        "age": {"18-34": 26, "35-49": 23, "50-64": 21, "65+": 18},
+        "race": {"White": 24, "Black": 13, "Hispanic": 22, "Other": 23},
+        "education": {"No college": 18, "Some college": 21, "College grad": 25, "Postgrad": 28},
+        "ideology": {"Very liberal": 26, "Somewhat liberal": 24, "Moderate": 19, "Conservative": 10}
+      },
+      "buttigieg": {
+        "gender": {"Men": 15, "Women": 13},
+        "age": {"18-34": 18, "35-49": 15, "50-64": 13, "65+": 11},
+        "race": {"White": 16, "Black": 8, "Hispanic": 12, "Other": 15},
+        "education": {"No college": 11, "Some college": 13, "College grad": 17, "Postgrad": 19},
+        "ideology": {"Very liberal": 16, "Somewhat liberal": 16, "Moderate": 13, "Conservative": 7}
+      },
+      "ocasio": {
+        "gender": {"Men": 9, "Women": 13},
+        "age": {"18-34": 21, "35-49": 11, "50-64": 7, "65+": 4},
+        "race": {"White": 9, "Black": 11, "Hispanic": 20, "Other": 13},
+        "education": {"No college": 10, "Some college": 11, "College grad": 12, "Postgrad": 14},
+        "ideology": {"Very liberal": 22, "Somewhat liberal": 12, "Moderate": 6, "Conservative": 3}
+      }
+    }
+  },
+  {
+    "id": "harvard-harris-2026-02",
+    "pollster": "Harvard Harris",
+    "date": "2026-02-02",
+    "sampleSize": 1200,
+    "source_url": null,
+    "harris": 39, "newsom": 30, "buttigieg": 5, "ocasio": 12, "shapiro": 4, "pritzker": 3, "booker": 2, "whitmer": 2, "beshear": 1, "kelly": 2,
+    "crosstabs": {
+      "harris": {
+        "gender": {"Men": 33, "Women": 44},
+        "age": {"18-34": 43, "35-49": 38, "50-64": 36, "65+": 37},
+        "race": {"White": 31, "Black": 68, "Hispanic": 44, "Other": 39},
+        "education": {"No college": 35, "Some college": 38, "College grad": 41, "Postgrad": 44},
+        "ideology": {"Very liberal": 50, "Somewhat liberal": 41, "Moderate": 29, "Conservative": 13}
+      },
+      "newsom": {
+        "gender": {"Men": 33, "Women": 27},
+        "age": {"18-34": 34, "35-49": 31, "50-64": 29, "65+": 26},
+        "race": {"White": 33, "Black": 19, "Hispanic": 29, "Other": 31},
+        "education": {"No college": 26, "Some college": 29, "College grad": 33, "Postgrad": 36},
+        "ideology": {"Very liberal": 34, "Somewhat liberal": 32, "Moderate": 27, "Conservative": 15}
+      },
+      "ocasio": {
+        "gender": {"Men": 10, "Women": 14},
+        "age": {"18-34": 24, "35-49": 13, "50-64": 8, "65+": 5},
+        "race": {"White": 10, "Black": 12, "Hispanic": 23, "Other": 15},
+        "education": {"No college": 11, "Some college": 12, "College grad": 13, "Postgrad": 15},
+        "ideology": {"Very liberal": 25, "Somewhat liberal": 13, "Moderate": 7, "Conservative": 3}
+      },
+      "buttigieg": {
+        "gender": {"Men": 6, "Women": 4},
+        "age": {"18-34": 7, "35-49": 5, "50-64": 5, "65+": 4},
+        "race": {"White": 6, "Black": 3, "Hispanic": 5, "Other": 6},
+        "education": {"No college": 4, "Some college": 5, "College grad": 6, "Postgrad": 7},
+        "ideology": {"Very liberal": 6, "Somewhat liberal": 6, "Moderate": 5, "Conservative": 3}
+      }
+    }
+  },
+  {
+    "id": "focaldata-2026-02",
+    "pollster": "Focaldata",
+    "date": "2026-02-10",
+    "sampleSize": 1148,
+    "source_url": null,
+    "harris": 39, "newsom": 21, "buttigieg": 7, "ocasio": 10, "shapiro": 7, "pritzker": 3, "booker": 3, "whitmer": 4, "beshear": 1, "kelly": 6,
+    "crosstabs": {
+      "harris": {
+        "gender": {"Men": 34, "Women": 44},
+        "age": {"18-34": 44, "35-49": 39, "50-64": 37, "65+": 36},
+        "race": {"White": 32, "Black": 67, "Hispanic": 45, "Other": 40},
+        "education": {"No college": 36, "Some college": 38, "College grad": 41, "Postgrad": 43},
+        "ideology": {"Very liberal": 49, "Somewhat liberal": 41, "Moderate": 30, "Conservative": 14}
+      },
+      "newsom": {
+        "gender": {"Men": 24, "Women": 18},
+        "age": {"18-34": 25, "35-49": 22, "50-64": 20, "65+": 17},
+        "race": {"White": 23, "Black": 13, "Hispanic": 20, "Other": 22},
+        "education": {"No college": 17, "Some college": 20, "College grad": 23, "Postgrad": 26},
+        "ideology": {"Very liberal": 25, "Somewhat liberal": 23, "Moderate": 18, "Conservative": 9}
+      },
+      "ocasio": {
+        "gender": {"Men": 9, "Women": 11},
+        "age": {"18-34": 20, "35-49": 11, "50-64": 7, "65+": 4},
+        "race": {"White": 9, "Black": 11, "Hispanic": 20, "Other": 12},
+        "education": {"No college": 10, "Some college": 10, "College grad": 11, "Postgrad": 13},
+        "ideology": {"Very liberal": 23, "Somewhat liberal": 12, "Moderate": 6, "Conservative": 3}
+      },
+      "buttigieg": {
+        "gender": {"Men": 8, "Women": 6},
+        "age": {"18-34": 9, "35-49": 7, "50-64": 7, "65+": 5},
+        "race": {"White": 8, "Black": 4, "Hispanic": 6, "Other": 8},
+        "education": {"No college": 5, "Some college": 7, "College grad": 8, "Postgrad": 9},
+        "ideology": {"Very liberal": 8, "Somewhat liberal": 8, "Moderate": 7, "Conservative": 4}
+      },
+      "shapiro": {
+        "gender": {"Men": 8, "Women": 6},
+        "age": {"18-34": 6, "35-49": 7, "50-64": 8, "65+": 8},
+        "race": {"White": 8, "Black": 5, "Hispanic": 6, "Other": 7},
+        "education": {"No college": 6, "Some college": 7, "College grad": 8, "Postgrad": 9},
+        "ideology": {"Very liberal": 5, "Somewhat liberal": 8, "Moderate": 9, "Conservative": 6}
+      }
+    }
   }
 ]
