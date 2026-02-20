@@ -25,7 +25,7 @@ POLLSTERS = [
     "YouGov","Harvard Harris","Focaldata","PPIC","EPIC-MRA","Des Moines Register",
     "Winthrop University","Clemson","Franklin Marshall","Nevada Independent",
     "Echelon Insights","Morning Consult","Ipsos","Marist","Monmouth",
-    "PPP","Siena","CNN","ABC News","NBC News","Fox News","Axios Vibes",
+    "PPP","Siena","CNN","ABC News","NBC News","Fox News","Axios Vibes","J.L. Partners","McLaughlin Associates","Redfield Wilton","Data for Progress","Navigator Research",
 ]
 
 CANDIDATE_PATTERNS = {
@@ -138,6 +138,10 @@ CATCH-ALL:
 - site:quinnipiac.edu/polling 2028
 - site:maristpoll.marist.edu 2028 Democratic
 - site:monmouth.edu/polling-institute 2028
+- site:echeloninsights.com 2028 democratic primary
+- "Echelon Insights" "2028 Democratic" poll
+- "J.L. Partners" "2028" poll
+- "McLaughlin" "2028 Democratic" poll
 
 Search ALL of the above. For every poll found:
 - Include crosstabs for ALL candidates tested, not just the winner
