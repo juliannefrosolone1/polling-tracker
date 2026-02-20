@@ -167,7 +167,10 @@
           "Conservative": 8
         }
       }
-    }
+    },
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2026-02-natl",
@@ -426,8 +429,41 @@
           "Moderate": 4,
           "Conservative": 2
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "focaldata-2026-02-natl",
@@ -717,7 +753,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "jl-partners-2026-02-natl",
@@ -977,7 +1016,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "harvard-harris-2026-02-natl",
@@ -1177,7 +1219,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "il-poll-2026-01-il",
@@ -1467,7 +1512,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "mclaughlin-2026-01-natl",
@@ -1727,7 +1775,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "winthrop-2026-01-sc",
@@ -1987,7 +2038,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2026-01-natl",
@@ -2246,8 +2300,41 @@
           "Moderate": 5,
           "Conservative": 3
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "nevada-ind-2026-01-nv",
@@ -2537,7 +2624,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-12-natl",
@@ -2796,8 +2886,41 @@
           "Moderate": 5,
           "Conservative": 3
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "emerson-2025-12-ia",
@@ -3117,7 +3240,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "suffolk-2025-12-nh",
@@ -3437,7 +3563,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "epic-mra-2025-12-mi",
@@ -3757,7 +3886,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "yougov-2025-11-natl",
@@ -4047,7 +4179,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "uga-2025-11-ga",
@@ -4367,7 +4502,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "emerson-2025-11-natl",
@@ -4567,7 +4705,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-11-natl",
@@ -4826,8 +4967,41 @@
           "Moderate": 5,
           "Conservative": 3
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "ppic-2025-11-ca",
@@ -5027,7 +5201,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "franklin-marshall-2025-11-pa",
@@ -5347,7 +5524,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "mc-2025-11-natl",
@@ -5577,7 +5757,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 1,
+    "slotkin": 0,
+    "sanders": 2
   },
   {
     "id": "high-point-2025-11-nc",
@@ -5897,7 +6080,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "clemson-2025-11-sc",
@@ -6157,7 +6343,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "ut-texas-2025-10-tx",
@@ -6447,7 +6636,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-10-natl",
@@ -6706,8 +6898,41 @@
           "Moderate": 5,
           "Conservative": 3
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "christopher-newport-2025-10-va",
@@ -7027,7 +7252,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "unh-2025-10-nh",
@@ -7347,7 +7575,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "yougov-2025-10-natl",
@@ -7667,7 +7898,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "emerson-2025-10-ia",
@@ -7987,7 +8221,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "nevada-ind-2025-09-nv",
@@ -8277,7 +8514,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "il-poll-2025-09-il",
@@ -8567,7 +8807,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-09-natl",
@@ -8826,8 +9069,41 @@
           "Moderate": 4,
           "Conservative": 2
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "epic-mra-2025-09-mi",
@@ -9147,7 +9423,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "fau-2025-09-fl",
@@ -9467,7 +9746,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "emerson-2025-08-natl",
@@ -9787,7 +10069,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "mc-2025-08-natl",
@@ -9987,7 +10272,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 1,
+    "slotkin": 0,
+    "sanders": 2
   },
   {
     "id": "franklin-marshall-2025-08-pa",
@@ -10307,7 +10595,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "unh-2025-08-nh",
@@ -10627,7 +10918,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-08-natl",
@@ -10887,7 +11181,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 2
   },
   {
     "id": "uga-2025-08-ga",
@@ -11207,7 +11504,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "dmr-2025-07-ia",
@@ -11527,7 +11827,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "ppic-2025-07-ca",
@@ -11757,7 +12060,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-07-natl",
@@ -12017,7 +12323,10 @@
           "Conservative": 2
         }
       }
-    }
+    },
+    "moore": 2,
+    "slotkin": 0,
+    "sanders": 2
   },
   {
     "id": "winthrop-2025-07-sc",
@@ -12307,7 +12616,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "nevada-ind-2025-06-nv",
@@ -12627,7 +12939,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "mc-2025-06-natl",
@@ -12887,7 +13202,10 @@
           "Conservative": 3
         }
       }
-    }
+    },
+    "moore": 1,
+    "slotkin": 0,
+    "sanders": 2
   },
   {
     "id": "emerson-2025-06-natl",
@@ -13205,9 +13523,42 @@
           "Moderate": 5,
           "Conservative": 3
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 5,
+          "Women": 5
+        },
+        "age": {
+          "18-34": 11,
+          "35-49": 6,
+          "50-64": 3,
+          "65+": 2
+        },
+        "race": {
+          "White": 4,
+          "Black": 4,
+          "Hispanic": 6,
+          "Other": 5
+        },
+        "education": {
+          "No college": 4,
+          "Some college": 5,
+          "College grad": 5,
+          "Postgrad": 6
+        },
+        "ideology": {
+          "Very liberal": 12,
+          "Somewhat liberal": 6,
+          "Moderate": 2,
+          "Conservative": 1
+        }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 5
   },
   {
     "id": "epic-mra-2025-06-mi",
@@ -13527,7 +13878,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "unh-2025-05-nh",
@@ -13847,7 +14201,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "quinnipiac-2025-04-natl",
@@ -14137,7 +14494,10 @@
         }
       }
     },
-    "source_url": null
+    "source_url": null,
+    "moore": 0,
+    "slotkin": 0,
+    "sanders": 0
   },
   {
     "id": "echelon-2025-04-natl",
@@ -14396,8 +14756,41 @@
           "Moderate": 4,
           "Conservative": 2
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 4
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
-    }
+    },
+    "moore": 1,
+    "slotkin": 0,
+    "sanders": 3
   },
   {
     "id": "mc-2025-03-natl",
@@ -14597,6 +14990,9 @@
           "Conservative": 1
         }
       }
-    }
+    },
+    "moore": 1,
+    "slotkin": 0,
+    "sanders": 2
   }
 ]
