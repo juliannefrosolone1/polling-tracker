@@ -12,6 +12,9 @@ const CANDIDATES = [
   { id: "whitmer",   name: "Gretchen Whitmer",          short: "Whitmer",   color: "#06d6a0" },
   { id: "beshear",   name: "Andy Beshear",              short: "Beshear",   color: "#ef476f" },
   { id: "kelly",     name: "Mark Kelly",                short: "Kelly",     color: "#118ab2" },
+  { id: "moore",     name: "Wes Moore",                  short: "Moore",     color: "#43aa8b" },
+  { id: "slotkin",   name: "Elissa Slotkin",              short: "Slotkin",   color: "#ff6b6b" },
+  { id: "sanders",   name: "Bernie Sanders",              short: "Sanders",   color: "#c77dff" },
 ];
 
 const DEMO_CATEGORIES = ["gender", "age", "race", "education", "ideology"];
@@ -46,7 +49,7 @@ const labelStyle = { display:"block", fontSize:10, color:"#666", fontFamily:"mon
 const inputStyle = { background:"#0a0a0f", border:"1px solid #333", color:"#e8e6df", padding:"8px 10px", fontFamily:"monospace", fontSize:13, width:"100%", boxSizing:"border-box", outline:"none" };
 const thStyle = { textAlign:"left", padding:"8px 12px", color:"#666", borderBottom:"1px solid #333", fontWeight:"normal", letterSpacing:"0.1em", fontSize:11 };
 const tdStyle = { padding:"8px 12px", color:"#e8e6df" };
-const EMPTY_POLL = { pollster:"", date:"", state:"National", sampleSize:"", harris:"", newsom:"", buttigieg:"", ocasio:"", shapiro:"", pritzker:"", booker:"", whitmer:"", beshear:"", kelly:"" };
+const EMPTY_POLL = { pollster:"", date:"", state:"National", sampleSize:"", harris:"", newsom:"", buttigieg:"", ocasio:"", shapiro:"", pritzker:"", booker:"", whitmer:"", beshear:"", kelly:"", moore:"", slotkin:"", sanders:"" };
 
 function CrosstabsPanel({ polls, candidate }) {
   const [activeCategory, setActiveCategory] = useState("gender");
