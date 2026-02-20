@@ -51,6 +51,28 @@ function CrosstabsPanel({polls,candidate}){
     </div>
   </div>);
 }
+function PasswordGate({ children }) {
+  const [input, setInput] = useState("");
+  const [authed, setAuthed] = useState(() => { try { return sessionStorage.getItem("auth") === "yes"; } catch { return false; } });
+  const [error, setError] = useState(false);
+  function attempt() {
+    if (input === "tree81x") { sessionStorage.setItem("auth","yes"); setAuthed(true); }
+    else { setError(true); setTimeout(()=>setError(false),1500); }
+  }
+  if (authed) return children;
+  return (
+    <div style={{background:"#0a0a0f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{textAlign:"center",padding:40}}>
+        <div style={{fontSize:11,letterSpacing:"0.2em",color:"#1a6bff",marginBottom:8,fontFamily:"monospace"}}>2028 DEMOCRATIC PRIMARY</div>
+        <div style={{fontSize:28,fontWeight:"bold",color:"#e8e6df",marginBottom:32,fontFamily:"Georgia,serif"}}>Polling Tracker</div>
+        <div style={{marginBottom:16}}><input type="password" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&attempt()} placeholder="Enter password" autoFocus style={{background:"#111118",border:"1px solid #444",color:"#e8e6df",padding:"12px 18px",fontFamily:"monospace",fontSize:14,outline:"none",width:220,textAlign:"center"}}/></div>
+        <button onClick={attempt} style={{background:"#1a6bff",color:"#fff",border:"none",padding:"10px 32px",cursor:"pointer",fontFamily:"monospace",fontSize:13,fontWeight:"bold"}}>ENTER</button>
+        {error && <div style={{color:"#e63946",fontSize:12,marginTop:14}}>Incorrect password</div>}
+      </div>
+    </div>
+  );
+}
+
 export default function PollingTracker(){
   const [polls,setPolls]=useState([]);
   const [loaded,setLoaded]=useState(false);
