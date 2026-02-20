@@ -97,8 +97,8 @@ export default function PollingTracker(){
   const selectedCrosstabCand=CANDIDATES.find(c=>c.id===crosstabCandidate)||CANDIDATES[0];
   const nationalCount=allPolls.filter(p=>(p.state||"National")==="National").length;
   const stateCount=allPolls.filter(p=>p.state&&p.state!=="National").length;
-  if(!loaded)return(<div style={{background:"#0a0a0f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontFamily:"Georgia,serif",fontSize:18}}>Loading tracker...</div>);
-  return(<div style={{background:"#0a0a0f",minHeight:"100vh",color:"#e8e6df",fontFamily:"'Georgia','Times New Roman',serif"}}>
+  if(!loaded)return(<PasswordGate><div style={{background:"#0a0a0f",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontFamily:"Georgia,serif",fontSize:18}}>Loading tracker...</div>);
+  return(<PasswordGate><div style={{background:"#0a0a0f",minHeight:"100vh",color:"#e8e6df",fontFamily:"'Georgia','Times New Roman',serif"}}>
     <div style={{borderBottom:"3px solid #1a6bff",padding:"28px 36px 18px"}}>
       <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
         <div><div style={{fontSize:11,letterSpacing:"0.2em",textTransform:"uppercase",color:"#1a6bff",fontFamily:"monospace",marginBottom:4}}>2028 Presidential Primary</div><h1 style={{margin:0,fontSize:"clamp(22px,4vw,36px)",fontWeight:"bold",letterSpacing:"-0.02em",lineHeight:1.1}}>Democratic Primary<br/><span style={{color:"#1a6bff"}}>Polling Tracker</span></h1></div>
