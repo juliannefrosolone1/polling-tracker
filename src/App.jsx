@@ -70,6 +70,7 @@ function PasswordGate({ children }) {
         {error && <div style={{color:"#e63946",fontSize:12,marginTop:14}}>Incorrect password</div>}
       </div>
     </div>
+    </PasswordGate>
   );
 }
 
