@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from "recharts";
 
 const CANDIDATES = [
@@ -12,22 +12,37 @@ const CANDIDATES = [
   { id: "whitmer",   name: "Gretchen Whitmer",          short: "Whitmer",   color: "#06d6a0" },
   { id: "beshear",   name: "Andy Beshear",              short: "Beshear",   color: "#ef476f" },
   { id: "kelly",     name: "Mark Kelly",                short: "Kelly",     color: "#118ab2" },
-  { id: "moore",     name: "Wes Moore",                  short: "Moore",     color: "#43aa8b" },
-  { id: "slotkin",   name: "Elissa Slotkin",              short: "Slotkin",   color: "#ff6b6b" },
-  { id: "sanders",   name: "Bernie Sanders",              short: "Sanders",   color: "#c77dff" },
-  { id: "gallego",   name: "Ruben Gallego",               short: "Gallego",   color: "#ff9f1c" },
-  { id: "warnock",   name: "Raphael Warnock",             short: "Warnock",   color: "#2ec4b6" },
-  { id: "ossoff",    name: "Jon Ossoff",                  short: "Ossoff",    color: "#e71d36" },
-  { id: "klobuchar", name: "Amy Klobuchar",               short: "Klobuchar", color: "#8338ec" },
-  { id: "khanna",    name: "Ro Khanna",                   short: "Khanna",    color: "#fb5607" },
-  { id: "cooper",    name: "Roy Cooper",                  short: "Cooper",    color: "#3a86ff" },
-  { id: "murphy",    name: "Chris Murphy",                short: "Murphy",    color: "#06d6a0" },
-  { id: "stewart",   name: "Jon Stewart",                 short: "Stewart",   color: "#ffbe0b" },
+  { id: "moore",     name: "Wes Moore",                 short: "Moore",     color: "#43aa8b" },
+  { id: "slotkin",   name: "Elissa Slotkin",            short: "Slotkin",   color: "#ff6b6b" },
+  { id: "sanders",   name: "Bernie Sanders",            short: "Sanders",   color: "#c77dff" },
+  { id: "gallego",   name: "Ruben Gallego",             short: "Gallego",   color: "#ff9f1c" },
+  { id: "warnock",   name: "Raphael Warnock",           short: "Warnock",   color: "#2ec4b6" },
+  { id: "ossoff",    name: "Jon Ossoff",                short: "Ossoff",    color: "#e71d36" },
+  { id: "klobuchar", name: "Amy Klobuchar",             short: "Klobuchar", color: "#8338ec" },
+  { id: "khanna",    name: "Ro Khanna",                 short: "Khanna",    color: "#fb5607" },
+  { id: "cooper",    name: "Roy Cooper",                short: "Cooper",    color: "#3a86ff" },
+  { id: "murphy",    name: "Chris Murphy",              short: "Murphy",    color: "#06d6a0" },
+  { id: "stewart",   name: "Jon Stewart",               short: "Stewart",   color: "#ffbe0b" },
 ];
 
 const DEMO_CATEGORIES = ["gender", "age", "race", "education", "ideology"];
 const DEMO_LABELS = { gender: "Gender", age: "Age Group", race: "Race / Ethnicity", education: "Education", ideology: "Political Ideology" };
 const GROUP_COLORS = ["#1a6bff","#e63946","#2a9d8f","#f4a261","#9b5de5","#e9c46a"];
+
+// localStorage key for local edits
+const LS_KEY = "poll_delta_2028_v2";
+
+function loadDelta() {
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return { edits: {}, additions: [], deletions: [] };
+}
+
+function saveDelta(delta) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(delta)); } catch {}
+}
 
 function weightedAverage(polls, candId) {
   if (!polls.length) return null;
@@ -54,7 +69,7 @@ function formatDate(d) {
 }
 
 function getDemoValue(poll, candId, demoFilter) {
-  if (!demoFilter) return parseFloat(poll[candId]) || null;
+  if (!demoFilter) return parseFloat(poll[candId]) ?? null;
   const ct = poll?.crosstabs?.[candId]?.[demoFilter.category]?.[demoFilter.group];
   return ct != null ? parseFloat(ct) : null;
 }
@@ -101,11 +116,141 @@ const DEMO_CATEGORY_LABELS = {
   gender: "GENDER", age: "AGE", race: "RACE", education: "EDUCATION", ideology: "IDEOLOGY"
 };
 
-const labelStyle = { display:"block", fontSize:10, color:"#666", fontFamily:"monospace", letterSpacing:"0.1em", marginBottom:4, textTransform:"uppercase" };
-const inputStyle = { background:"#0a0a0f", border:"1px solid #333", color:"#e8e6df", padding:"8px 10px", fontFamily:"monospace", fontSize:13, width:"100%", boxSizing:"border-box", outline:"none" };
 const thStyle = { textAlign:"left", padding:"8px 12px", color:"#666", borderBottom:"1px solid #333", fontWeight:"normal", letterSpacing:"0.1em", fontSize:11 };
 const tdStyle = { padding:"8px 12px", color:"#e8e6df" };
-const EMPTY_POLL = { pollster:"", date:"", state:"National", sampleSize:"", harris:"", newsom:"", buttigieg:"", ocasio:"", shapiro:"", pritzker:"", booker:"", whitmer:"", beshear:"", kelly:"", moore:"", slotkin:"", sanders:"", gallego:"", warnock:"", ossoff:"", klobuchar:"", khanna:"", cooper:"", murphy:"", stewart:"" };
+const inputStyle = { background:"#0a0a0f", border:"1px solid #333", color:"#e8e6df", padding:"8px 10px", fontFamily:"monospace", fontSize:13, width:"100%", boxSizing:"border-box", outline:"none" };
+const labelStyle = { display:"block", fontSize:10, color:"#666", fontFamily:"monospace", letterSpacing:"0.1em", marginBottom:4, textTransform:"uppercase" };
+
+const EMPTY_FORM = () => ({ pollster:"", date:"", state:"National", sampleSize:"", source_url:"",
+  ...Object.fromEntries(CANDIDATES.map(c => [c.id, ""])) });
+
+
+// ─── POLL EDIT MODAL ──────────────────────────────────────────────────────────
+
+function PollEditModal({ poll, onSave, onDelete, onClose }) {
+  const isNew = !poll.id || poll.id === "__new__";
+  const [form, setForm] = useState(() => {
+    const f = EMPTY_FORM();
+    if (!isNew) {
+      Object.assign(f, {
+        pollster: poll.pollster || "",
+        date: poll.date || "",
+        state: poll.state || "National",
+        sampleSize: poll.sampleSize || "",
+        source_url: poll.source_url || "",
+      });
+      CANDIDATES.forEach(c => { f[c.id] = poll[c.id] != null ? String(poll[c.id]) : ""; });
+    }
+    return f;
+  });
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  const valid = form.pollster.trim() && form.date.trim();
+
+  function handleSave() {
+    const saved = {
+      ...poll,
+      pollster: form.pollster.trim(),
+      date: form.date,
+      state: form.state.trim() || "National",
+      sampleSize: form.sampleSize ? parseInt(form.sampleSize) : null,
+      source_url: form.source_url.trim() || null,
+    };
+    CANDIDATES.forEach(c => {
+      const v = form[c.id];
+      saved[c.id] = v !== "" && v !== null ? parseFloat(v) : null;
+    });
+    onSave(saved);
+  }
+
+  function set(field, val) { setForm(f => ({ ...f, [field]: val })); }
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div style={{ background:"#111118", border:"1px solid #333", width:"100%", maxWidth:820, maxHeight:"90vh", overflowY:"auto", padding:28 }}>
+        {/* Header */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20, borderBottom:"1px solid #222", paddingBottom:16 }}>
+          <div style={{ fontFamily:"monospace", fontSize:13, color:"#1a6bff", letterSpacing:"0.15em" }}>
+            {isNew ? "ADD NEW POLL" : "EDIT POLL"}
+          </div>
+          <button onClick={onClose} style={{ background:"none", border:"none", color:"#666", cursor:"pointer", fontSize:18, padding:"0 4px" }}>✕</button>
+        </div>
+
+        {/* Metadata */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:12, marginBottom:20 }}>
+          <div>
+            <label style={labelStyle}>Pollster *</label>
+            <input value={form.pollster} onChange={e=>set("pollster",e.target.value)} style={inputStyle} placeholder="e.g. UNH Survey Center"/>
+          </div>
+          <div>
+            <label style={labelStyle}>Date *</label>
+            <input type="date" value={form.date} onChange={e=>set("date",e.target.value)} style={inputStyle}/>
+          </div>
+          <div>
+            <label style={labelStyle}>State / Geography</label>
+            <input value={form.state} onChange={e=>set("state",e.target.value)} style={inputStyle} placeholder="National or state name"/>
+          </div>
+          <div>
+            <label style={labelStyle}>Sample Size</label>
+            <input type="number" value={form.sampleSize} onChange={e=>set("sampleSize",e.target.value)} style={inputStyle} placeholder="e.g. 635"/>
+          </div>
+          <div style={{ gridColumn:"span 2" }}>
+            <label style={labelStyle}>Source URL</label>
+            <input value={form.source_url} onChange={e=>set("source_url",e.target.value)} style={inputStyle} placeholder="https://..."/>
+          </div>
+        </div>
+
+        {/* Candidate numbers */}
+        <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", marginBottom:10, letterSpacing:"0.1em" }}>
+          CANDIDATE NUMBERS (%) — leave blank if not tested
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))", gap:10, marginBottom:24 }}>
+          {CANDIDATES.map(c => (
+            <div key={c.id}>
+              <label style={{ ...labelStyle, color: form[c.id] !== "" ? c.color : "#555" }}>{c.short}</label>
+              <input
+                type="number" min="0" max="100" step="0.1"
+                value={form[c.id]}
+                onChange={e => set(c.id, e.target.value)}
+                style={{ ...inputStyle, borderColor: form[c.id] !== "" ? c.color : "#333" }}
+                placeholder="—"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Actions */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", borderTop:"1px solid #222", paddingTop:16 }}>
+          {/* Delete */}
+          <div>
+            {!isNew && (
+              deleteConfirm
+                ? <span>
+                    <span style={{ fontSize:12, color:"#e63946", fontFamily:"monospace", marginRight:12 }}>Delete this poll?</span>
+                    <button onClick={onDelete} style={{ background:"#e63946", color:"#fff", border:"none", padding:"8px 16px", cursor:"pointer", fontFamily:"monospace", fontSize:12, marginRight:8 }}>CONFIRM DELETE</button>
+                    <button onClick={()=>setDeleteConfirm(false)} style={{ background:"#333", color:"#aaa", border:"none", padding:"8px 16px", cursor:"pointer", fontFamily:"monospace", fontSize:12 }}>CANCEL</button>
+                  </span>
+                : <button onClick={()=>setDeleteConfirm(true)} style={{ background:"none", border:"1px solid #444", color:"#666", padding:"8px 16px", cursor:"pointer", fontFamily:"monospace", fontSize:12 }}>
+                    ✕ DELETE POLL
+                  </button>
+            )}
+          </div>
+          {/* Save / Cancel */}
+          <div style={{ display:"flex", gap:10 }}>
+            <button onClick={onClose} style={{ background:"#222", color:"#aaa", border:"none", padding:"10px 22px", cursor:"pointer", fontFamily:"monospace", fontSize:12 }}>CANCEL</button>
+            <button onClick={handleSave} disabled={!valid} style={{ background:valid?"#1a6bff":"#333", color:valid?"#fff":"#666", border:"none", padding:"10px 28px", cursor:valid?"pointer":"not-allowed", fontFamily:"monospace", fontSize:13, fontWeight:"bold", letterSpacing:"0.08em" }}>
+              {isNew ? "ADD POLL" : "SAVE CHANGES"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ─── CROSSTABS PANEL ──────────────────────────────────────────────────────────
 
 function CrosstabsPanel({ polls, candidate }) {
   const [activeCategory, setActiveCategory] = useState("gender");
@@ -211,6 +356,9 @@ function CrosstabsPanel({ polls, candidate }) {
   );
 }
 
+
+// ─── PASSWORD GATE ────────────────────────────────────────────────────────────
+
 function PasswordGate({ children }) {
   const [input, setInput] = useState("");
   const [authed, setAuthed] = useState(() => { try { return sessionStorage.getItem("auth") === "yes"; } catch { return false; } });
@@ -235,40 +383,50 @@ function PasswordGate({ children }) {
   );
 }
 
-export default function PollingTracker() {
-  const [polls, setPolls]               = useState([]);
-  const [loaded, setLoaded]             = useState(false);
-  const [lastUpdated, setLastUpdated]   = useState(null);
-  const [showForm, setShowForm]         = useState(false);
-  const [form, setForm]                 = useState(EMPTY_POLL);
-  const [activeTab, setActiveTab]       = useState("chart");
-  const [visibleCands, setVisibleCands] = useState(CANDIDATES.map(c=>c.id));
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [manualPolls, setManualPolls]   = useState([]);
-  const [crosstabCandidate, setCrosstabCandidate] = useState("harris");
-  const [stateFilter, setStateFilter]   = useState("All");
-  const [demoFilter, setDemoFilter]     = useState(null); // {category, group} or null
 
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+export default function PollingTracker() {
+  const [basePollsFromServer, setBasePollsFromServer] = useState([]);
+  const [delta, setDelta]                             = useState({ edits:{}, additions:[], deletions:[] });
+  const [loaded, setLoaded]                           = useState(false);
+  const [lastUpdated, setLastUpdated]                 = useState(null);
+  const [activeTab, setActiveTab]                     = useState("chart");
+  const [visibleCands, setVisibleCands]               = useState(CANDIDATES.map(c=>c.id));
+  const [crosstabCandidate, setCrosstabCandidate]     = useState("harris");
+  const [stateFilter, setStateFilter]                 = useState("All");
+  const [demoFilter, setDemoFilter]                   = useState(null);
+  const [editingPoll, setEditingPoll]                 = useState(null); // null = closed, poll obj = open
+
+  // Load server polls + local delta
   useEffect(() => {
     async function load() {
       try {
         const res = await fetch("/polls.json?t=" + Date.now());
         const data = await res.json();
-        setPolls(data);
+        setBasePollsFromServer(data);
         setLastUpdated(new Date().toLocaleDateString());
-      } catch { setPolls([]); }
-      try {
-        const saved = localStorage.getItem("manual-polls-2028");
-        if (saved) setManualPolls(JSON.parse(saved));
-      } catch {}
+      } catch { setBasePollsFromServer([]); }
+      setDelta(loadDelta());
       setLoaded(true);
     }
     load();
   }, []);
 
-  const allPolls = useMemo(() =>
-    [...polls, ...manualPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)),
-  [polls, manualPolls]);
+  // Persist delta whenever it changes
+  useEffect(() => {
+    if (loaded) saveDelta(delta);
+  }, [delta, loaded]);
+
+  // Compute all polls: base - deletions + edits applied + additions
+  const allPolls = useMemo(() => {
+    const polls = basePollsFromServer
+      .filter(p => !delta.deletions.includes(p.id))
+      .map(p => delta.edits[p.id] ? { ...p, ...delta.edits[p.id] } : p);
+    return [...polls, ...delta.additions].sort((a,b) => new Date(a.date) - new Date(b.date));
+  }, [basePollsFromServer, delta]);
+
+  const localChangeCount = Object.keys(delta.edits).length + delta.additions.length + delta.deletions.length;
 
   const allStates = useMemo(() => {
     const states = [...new Set(allPolls.map(p => p.state || "National"))].sort();
@@ -279,37 +437,76 @@ export default function PollingTracker() {
     stateFilter === "All" ? allPolls : allPolls.filter(p => (p.state || "National") === stateFilter),
   [allPolls, stateFilter]);
 
-  function addManualPoll() {
-    const newPoll = { ...form, id:`manual-${Date.now()}`, state: form.state || "National" };
-    const updated = [...manualPolls, newPoll];
-    setManualPolls(updated);
-    localStorage.setItem("manual-polls-2028", JSON.stringify(updated));
-    setForm(EMPTY_POLL);
-    setShowForm(false);
+  // ── Edit / Add / Delete handlers ──
+
+  function openAddModal() {
+    setEditingPoll({ id:"__new__" });
   }
 
-  function deleteManualPoll(id) {
-    const updated = manualPolls.filter(p => p.id !== id);
-    setManualPolls(updated);
-    localStorage.setItem("manual-polls-2028", JSON.stringify(updated));
-    setDeleteConfirm(null);
+  function openEditModal(poll) {
+    setEditingPoll(poll);
   }
+
+  function handleSavePoll(saved) {
+    if (saved.id === "__new__") {
+      // New poll addition
+      const newPoll = { ...saved, id: `manual-${Date.now()}` };
+      setDelta(d => ({ ...d, additions: [...d.additions, newPoll] }));
+    } else {
+      // Edit existing poll — store delta
+      const { id, ...fields } = saved;
+      setDelta(d => ({ ...d, edits: { ...d.edits, [id]: fields } }));
+    }
+    setEditingPoll(null);
+  }
+
+  function handleDeletePoll(pollId) {
+    if (pollId.startsWith("manual-")) {
+      // Remove from additions
+      setDelta(d => ({ ...d, additions: d.additions.filter(p => p.id !== pollId) }));
+    } else {
+      // Add to deletions (hides from server polls)
+      setDelta(d => ({
+        ...d,
+        deletions: [...d.deletions, pollId],
+        edits: Object.fromEntries(Object.entries(d.edits).filter(([k]) => k !== pollId))
+      }));
+    }
+    setEditingPoll(null);
+  }
+
+  function resetLocalChanges() {
+    if (!window.confirm("Reset all local edits, additions, and deletions? Server data will be restored.")) return;
+    const empty = { edits:{}, additions:[], deletions:[] };
+    setDelta(empty);
+    saveDelta(empty);
+  }
+
+  function exportPollsJson() {
+    const sorted = [...allPolls].sort((a,b) => new Date(b.date) - new Date(a.date));
+    const blob = new Blob([JSON.stringify(sorted, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "polls.json"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Derived data ──
 
   const averages = useMemo(() =>
     CANDIDATES.map(c => ({ ...c, avg: weightedAverageDemo(filteredPolls, c.id, demoFilter) }))
       .filter(c => c.avg !== null)
-      .sort((a,b)=>parseFloat(b.avg)-parseFloat(a.avg)),
+      .sort((a,b) => parseFloat(b.avg) - parseFloat(a.avg)),
   [filteredPolls, demoFilter]);
 
   const chartData = useMemo(() =>
-    [...filteredPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(p => {
+    [...filteredPolls].sort((a,b) => new Date(a.date) - new Date(b.date)).map(p => {
       const row = { label:`${formatDate(p.date)}${p.state&&p.state!=="National"?` (${p.state})`:""}`, pollster:p.pollster, state:p.state };
       CANDIDATES.forEach(c => { row[c.id] = parseFloat(p[c.id]) || null; });
       return row;
     }),
   [filteredPolls]);
 
-  const formValid = form.pollster && form.date && CANDIDATES.some(c=>form[c.id]);
   const selectedCrosstabCand = CANDIDATES.find(c=>c.id===crosstabCandidate) || CANDIDATES[0];
   const nationalCount = allPolls.filter(p=>(p.state||"National")==="National").length;
   const stateCount = allPolls.filter(p=>p.state&&p.state!=="National").length;
@@ -324,6 +521,16 @@ export default function PollingTracker() {
     <PasswordGate>
     <div style={{ background:"#0a0a0f", minHeight:"100vh", color:"#e8e6df", fontFamily:"'Georgia','Times New Roman',serif" }}>
 
+      {/* Edit Modal */}
+      {editingPoll && (
+        <PollEditModal
+          poll={editingPoll}
+          onSave={handleSavePoll}
+          onDelete={() => handleDeletePoll(editingPoll.id)}
+          onClose={() => setEditingPoll(null)}
+        />
+      )}
+
       {/* Header */}
       <div style={{ borderBottom:"3px solid #1a6bff", padding:"28px 36px 18px" }}>
         <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
@@ -333,9 +540,24 @@ export default function PollingTracker() {
               Democratic Primary<br/><span style={{ color:"#1a6bff" }}>Polling Tracker</span>
             </h1>
           </div>
-          <button onClick={()=>setShowForm(!showForm)} style={{ background:showForm?"#333":"#1a6bff", color:"#fff", border:"none", padding:"10px 20px", cursor:"pointer", fontFamily:"monospace", fontSize:13, letterSpacing:"0.05em", fontWeight:"bold" }}>
-            {showForm?"✕ CANCEL":"+ ADD POLL"}
-          </button>
+          <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
+            {localChangeCount > 0 && (
+              <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                <span style={{ fontSize:11, color:"#e9c46a", fontFamily:"monospace", background:"#e9c46a18", border:"1px solid #e9c46a44", padding:"4px 10px" }}>
+                  {localChangeCount} local edit{localChangeCount!==1?"s":""}
+                </span>
+                <button onClick={exportPollsJson} style={{ background:"#1a6bff22", border:"1px solid #1a6bff66", color:"#1a6bff", padding:"6px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11, letterSpacing:"0.05em" }}>
+                  ↓ EXPORT polls.json
+                </button>
+                <button onClick={resetLocalChanges} style={{ background:"none", border:"1px solid #444", color:"#666", padding:"6px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11 }}>
+                  RESET
+                </button>
+              </div>
+            )}
+            <button onClick={openAddModal} style={{ background:"#1a6bff", color:"#fff", border:"none", padding:"10px 20px", cursor:"pointer", fontFamily:"monospace", fontSize:13, letterSpacing:"0.05em", fontWeight:"bold" }}>
+              + ADD POLL
+            </button>
+          </div>
         </div>
         <div style={{ marginTop:10, fontSize:12, color:"#888", fontFamily:"monospace", display:"flex", gap:24, flexWrap:"wrap" }}>
           <span>{nationalCount} national · {stateCount} state polls · Apr 2025–present</span>
@@ -343,34 +565,6 @@ export default function PollingTracker() {
           {lastUpdated && <span>Last loaded: {lastUpdated}</span>}
         </div>
       </div>
-
-      {/* Add Poll Form */}
-      {showForm && (
-        <div style={{ background:"#111118", borderBottom:"1px solid #222", padding:"24px 36px" }}>
-          <div style={{ fontSize:13, fontFamily:"monospace", color:"#1a6bff", marginBottom:16, letterSpacing:"0.1em" }}>MANUAL POLL ENTRY</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:12, marginBottom:16 }}>
-            <div><label style={labelStyle}>Pollster</label><input value={form.pollster} onChange={e=>setForm(f=>({...f,pollster:e.target.value}))} style={inputStyle} placeholder="e.g. Harvard Harris"/></div>
-            <div><label style={labelStyle}>Date</label><input type="date" value={form.date} onChange={e=>setForm(f=>({...f,date:e.target.value}))} style={inputStyle}/></div>
-            <div>
-              <label style={labelStyle}>State</label>
-              <input value={form.state} onChange={e=>setForm(f=>({...f,state:e.target.value}))} style={inputStyle} placeholder="National or state name"/>
-            </div>
-            <div><label style={labelStyle}>Sample Size</label><input type="number" value={form.sampleSize} onChange={e=>setForm(f=>({...f,sampleSize:e.target.value}))} style={inputStyle} placeholder="e.g. 1200"/></div>
-          </div>
-          <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", marginBottom:8, letterSpacing:"0.1em" }}>CANDIDATE NUMBERS (%) — leave blank if not polled</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:10 }}>
-            {CANDIDATES.map(c=>(
-              <div key={c.id}>
-                <label style={{ ...labelStyle, color:c.color }}>{c.short}</label>
-                <input type="number" value={form[c.id]} onChange={e=>setForm(f=>({...f,[c.id]:e.target.value}))} style={{ ...inputStyle, borderColor:form[c.id]?c.color:"#333" }} placeholder="%" min="0" max="100"/>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop:16 }}>
-            <button onClick={addManualPoll} disabled={!formValid} style={{ background:formValid?"#1a6bff":"#333", color:formValid?"#fff":"#666", border:"none", padding:"10px 28px", cursor:formValid?"pointer":"not-allowed", fontFamily:"monospace", fontSize:13, fontWeight:"bold", letterSpacing:"0.1em" }}>SAVE POLL</button>
-          </div>
-        </div>
-      )}
 
       {/* State Filter */}
       <div style={{ padding:"20px 36px 0", overflowX:"auto" }}>
@@ -397,8 +591,7 @@ export default function PollingTracker() {
               background: demoFilter===null?"#1a6bff":"#111118",
               border:`1px solid ${demoFilter===null?"#1a6bff":"#333"}`,
               color: demoFilter===null?"#fff":"#888",
-              padding:"5px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11,
-              letterSpacing:"0.05em", whiteSpace:"nowrap"
+              padding:"5px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11, letterSpacing:"0.05em", whiteSpace:"nowrap"
             }}>Overall</button>
           </div>
           {Object.keys(DEMO_CATEGORY_LABELS).map(cat => (
@@ -411,8 +604,7 @@ export default function PollingTracker() {
                     background: isActive?"#2a9d8f22":"#111118",
                     border:`1px solid ${isActive?"#2a9d8f":"#333"}`,
                     color: isActive?"#2a9d8f":"#888",
-                    padding:"5px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11,
-                    letterSpacing:"0.05em", whiteSpace:"nowrap"
+                    padding:"5px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11, letterSpacing:"0.05em", whiteSpace:"nowrap"
                   }}>{d.group}</button>
                 );
               })}
@@ -483,23 +675,28 @@ export default function PollingTracker() {
                 <th style={thStyle}>N</th>
                 {CANDIDATES.map(c=><th key={c.id} style={{ ...thStyle, color:c.color }}>{c.short}</th>)}
                 <th style={thStyle}>Crosstabs</th>
-                <th style={thStyle}></th>
+                <th style={{ ...thStyle, width:40 }}></th>
               </tr>
             </thead>
             <tbody>
               {[...filteredPolls].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p=>{
                 const isManual = p.id?.startsWith("manual-");
+                const isEdited = !!delta.edits[p.id];
                 const hasCrosstabs = !!p.crosstabs;
                 const isState = p.state && p.state !== "National";
                 return (
                   <tr key={p.id} style={{ borderBottom:"1px solid #1a1a22" }}>
                     <td style={tdStyle}>{formatDate(p.date)}</td>
-                    <td style={tdStyle}>{p.pollster}{isManual&&<span style={{ fontSize:9, color:"#555", marginLeft:6 }}>manual</span>}</td>
+                    <td style={tdStyle}>
+                      {p.pollster}
+                      {isManual && <span style={{ fontSize:9, color:"#555", marginLeft:6 }}>manual</span>}
+                      {isEdited && <span style={{ fontSize:9, color:"#e9c46a", marginLeft:6 }}>edited</span>}
+                    </td>
                     <td style={{ ...tdStyle, color: isState?"#e9c46a":"#666" }}>{p.state||"National"}</td>
                     <td style={{ ...tdStyle, color:"#666" }}>{p.sampleSize?Number(p.sampleSize).toLocaleString():"—"}</td>
                     {CANDIDATES.map(c=>{
-                      const val=getDemoValue(p, c.id, demoFilter);
-                      const isLeader=val!==null&&!isNaN(val)&&CANDIDATES.every(o=>o.id===c.id||getDemoValue(p,o.id,demoFilter)===null||getDemoValue(p,o.id,demoFilter)<=val);
+                      const val = getDemoValue(p, c.id, demoFilter);
+                      const isLeader = val!==null&&!isNaN(val)&&CANDIDATES.every(o=>o.id===c.id||getDemoValue(p,o.id,demoFilter)===null||getDemoValue(p,o.id,demoFilter)<=val);
                       return <td key={c.id} style={{ ...tdStyle, color:val!==null&&!isNaN(val)?(isLeader?c.color:"#e8e6df"):"#333", fontWeight:isLeader?"bold":"normal" }}>{val!==null&&!isNaN(val)?`${val}%`:"—"}</td>;
                     })}
                     <td style={tdStyle}>
@@ -507,10 +704,10 @@ export default function PollingTracker() {
                         ? <span style={{ color:"#2a9d8f", fontSize:11, cursor:"pointer" }} onClick={()=>setActiveTab("crosstabs")}>✓ view</span>
                         : <span style={{ color:"#333", fontSize:11 }}>—</span>}
                     </td>
-                    <td style={tdStyle}>
-                      {isManual&&(deleteConfirm===p.id
-                        ?<span><span style={{ color:"#e63946", cursor:"pointer", marginRight:8 }} onClick={()=>deleteManualPoll(p.id)}>confirm</span><span style={{ color:"#666", cursor:"pointer" }} onClick={()=>setDeleteConfirm(null)}>cancel</span></span>
-                        :<span style={{ color:"#444", cursor:"pointer" }} onClick={()=>setDeleteConfirm(p.id)}>✕</span>)}
+                    <td style={{ ...tdStyle, textAlign:"center" }}>
+                      <button onClick={()=>openEditModal(p)} style={{ background:"none", border:"1px solid #333", color:"#555", cursor:"pointer", fontSize:11, padding:"3px 8px", fontFamily:"monospace" }} title="Edit poll">
+                        ✎
+                      </button>
                     </td>
                   </tr>
                 );
