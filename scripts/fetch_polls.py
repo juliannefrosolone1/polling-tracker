@@ -150,7 +150,7 @@ Search ALL of the above. For every poll found:
 Return complete JSON array of new polls only. Return [] if truly nothing new."""
 
     response = client.messages.create(
-        model="claude-opus-4-6",
+        model="claude-haiku-4-5-20251001",
         max_tokens=8000,
         system=SYSTEM_PROMPT,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
