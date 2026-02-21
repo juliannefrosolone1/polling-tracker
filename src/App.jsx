@@ -53,6 +53,54 @@ function formatDate(d) {
   return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
 }
 
+function getDemoValue(poll, candId, demoFilter) {
+  if (!demoFilter) return parseFloat(poll[candId]) || null;
+  const ct = poll?.crosstabs?.[candId]?.[demoFilter.category]?.[demoFilter.group];
+  return ct != null ? parseFloat(ct) : null;
+}
+
+function weightedAverageDemo(polls, candId, demoFilter) {
+  if (!polls.length) return null;
+  let totalWeight = 0, weightedSum = 0;
+  const now = new Date();
+  polls.forEach(p => {
+    const val = getDemoValue(p, candId, demoFilter);
+    if (val === null || isNaN(val)) return;
+    const ageDays = (now - new Date(p.date)) / (1000 * 60 * 60 * 24);
+    const recency = Math.exp(-ageDays / 60);
+    const size = Math.sqrt(parseFloat(p.sampleSize) || 500);
+    const w = recency * size;
+    totalWeight += w;
+    weightedSum += val * w;
+  });
+  return totalWeight > 0 ? (weightedSum / totalWeight).toFixed(1) : null;
+}
+
+const DEMO_FILTERS = [
+  { category: "gender",    group: "Men" },
+  { category: "gender",    group: "Women" },
+  { category: "age",       group: "18-34" },
+  { category: "age",       group: "35-49" },
+  { category: "age",       group: "50-64" },
+  { category: "age",       group: "65+" },
+  { category: "race",      group: "White" },
+  { category: "race",      group: "Black" },
+  { category: "race",      group: "Hispanic" },
+  { category: "race",      group: "Other" },
+  { category: "education", group: "No college" },
+  { category: "education", group: "Some college" },
+  { category: "education", group: "College grad" },
+  { category: "education", group: "Postgrad" },
+  { category: "ideology",  group: "Very liberal" },
+  { category: "ideology",  group: "Somewhat liberal" },
+  { category: "ideology",  group: "Moderate" },
+  { category: "ideology",  group: "Conservative" },
+];
+
+const DEMO_CATEGORY_LABELS = {
+  gender: "GENDER", age: "AGE", race: "RACE", education: "EDUCATION", ideology: "IDEOLOGY"
+};
+
 const labelStyle = { display:"block", fontSize:10, color:"#666", fontFamily:"monospace", letterSpacing:"0.1em", marginBottom:4, textTransform:"uppercase" };
 const inputStyle = { background:"#0a0a0f", border:"1px solid #333", color:"#e8e6df", padding:"8px 10px", fontFamily:"monospace", fontSize:13, width:"100%", boxSizing:"border-box", outline:"none" };
 const thStyle = { textAlign:"left", padding:"8px 12px", color:"#666", borderBottom:"1px solid #333", fontWeight:"normal", letterSpacing:"0.1em", fontSize:11 };
@@ -199,6 +247,7 @@ export default function PollingTracker() {
   const [manualPolls, setManualPolls]   = useState([]);
   const [crosstabCandidate, setCrosstabCandidate] = useState("harris");
   const [stateFilter, setStateFilter]   = useState("All");
+  const [demoFilter, setDemoFilter]     = useState(null); // {category, group} or null
 
   useEffect(() => {
     async function load() {
@@ -247,10 +296,10 @@ export default function PollingTracker() {
   }
 
   const averages = useMemo(() =>
-    CANDIDATES.map(c => ({ ...c, avg: weightedAverage(filteredPolls, c.id) }))
+    CANDIDATES.map(c => ({ ...c, avg: weightedAverageDemo(filteredPolls, c.id, demoFilter) }))
       .filter(c => c.avg !== null)
       .sort((a,b)=>parseFloat(b.avg)-parseFloat(a.avg)),
-  [filteredPolls]);
+  [filteredPolls, demoFilter]);
 
   const chartData = useMemo(() =>
     [...filteredPolls].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(p => {
@@ -339,10 +388,43 @@ export default function PollingTracker() {
         </div>
       </div>
 
+      {/* Demographic Filter */}
+      <div style={{ padding:"16px 36px 0", overflowX:"auto" }}>
+        <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.15em", marginBottom:10 }}>FILTER BY DEMOGRAPHIC</div>
+        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          <div style={{ display:"flex", gap:8, flexWrap:"wrap", alignItems:"center" }}>
+            <button onClick={()=>setDemoFilter(null)} style={{
+              background: demoFilter===null?"#1a6bff":"#111118",
+              border:`1px solid ${demoFilter===null?"#1a6bff":"#333"}`,
+              color: demoFilter===null?"#fff":"#888",
+              padding:"5px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11,
+              letterSpacing:"0.05em", whiteSpace:"nowrap"
+            }}>Overall</button>
+          </div>
+          {Object.keys(DEMO_CATEGORY_LABELS).map(cat => (
+            <div key={cat} style={{ display:"flex", gap:6, flexWrap:"wrap", alignItems:"center" }}>
+              <span style={{ fontSize:9, color:"#555", fontFamily:"monospace", letterSpacing:"0.12em", minWidth:72 }}>{DEMO_CATEGORY_LABELS[cat]}</span>
+              {DEMO_FILTERS.filter(d=>d.category===cat).map(d => {
+                const isActive = demoFilter?.category===d.category && demoFilter?.group===d.group;
+                return (
+                  <button key={d.group} onClick={()=>setDemoFilter(isActive?null:d)} style={{
+                    background: isActive?"#2a9d8f22":"#111118",
+                    border:`1px solid ${isActive?"#2a9d8f":"#333"}`,
+                    color: isActive?"#2a9d8f":"#888",
+                    padding:"5px 14px", cursor:"pointer", fontFamily:"monospace", fontSize:11,
+                    letterSpacing:"0.05em", whiteSpace:"nowrap"
+                  }}>{d.group}</button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Averages */}
       <div style={{ padding:"20px 36px 0", overflowX:"auto" }}>
         <div style={{ fontSize:11, color:"#666", fontFamily:"monospace", letterSpacing:"0.15em", marginBottom:14 }}>
-          WEIGHTED POLLING AVERAGE {stateFilter!=="All"?`· ${stateFilter} only`:""} · click to toggle on chart
+          WEIGHTED POLLING AVERAGE {stateFilter!=="All"?`· ${stateFilter} only`:""}{demoFilter?` · ${demoFilter.group} voters`:""} · click to toggle on chart
         </div>
         <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
           {averages.map((c,i) => (
@@ -416,9 +498,9 @@ export default function PollingTracker() {
                     <td style={{ ...tdStyle, color: isState?"#e9c46a":"#666" }}>{p.state||"National"}</td>
                     <td style={{ ...tdStyle, color:"#666" }}>{p.sampleSize?Number(p.sampleSize).toLocaleString():"—"}</td>
                     {CANDIDATES.map(c=>{
-                      const val=parseFloat(p[c.id]);
-                      const isLeader=!isNaN(val)&&CANDIDATES.every(o=>o.id===c.id||isNaN(parseFloat(p[o.id]))||parseFloat(p[o.id])<=val);
-                      return <td key={c.id} style={{ ...tdStyle, color:!isNaN(val)?(isLeader?c.color:"#e8e6df"):"#333", fontWeight:isLeader?"bold":"normal" }}>{!isNaN(val)?`${val}%`:"—"}</td>;
+                      const val=getDemoValue(p, c.id, demoFilter);
+                      const isLeader=val!==null&&!isNaN(val)&&CANDIDATES.every(o=>o.id===c.id||getDemoValue(p,o.id,demoFilter)===null||getDemoValue(p,o.id,demoFilter)<=val);
+                      return <td key={c.id} style={{ ...tdStyle, color:val!==null&&!isNaN(val)?(isLeader?c.color:"#e8e6df"):"#333", fontWeight:isLeader?"bold":"normal" }}>{val!==null&&!isNaN(val)?`${val}%`:"—"}</td>;
                     })}
                     <td style={tdStyle}>
                       {hasCrosstabs
@@ -437,7 +519,7 @@ export default function PollingTracker() {
             <tfoot>
               <tr style={{ borderTop:"2px solid #333" }}>
                 <td colSpan={4} style={{ ...tdStyle, color:"#1a6bff", letterSpacing:"0.1em" }}>AVG {stateFilter!=="All"?`(${stateFilter})`:""}</td>
-                {CANDIDATES.map(c=><td key={c.id} style={{ ...tdStyle, color:c.color, fontWeight:"bold" }}>{weightedAverage(filteredPolls,c.id)?`${weightedAverage(filteredPolls,c.id)}%`:"—"}</td>)}
+                {CANDIDATES.map(c=><td key={c.id} style={{ ...tdStyle, color:c.color, fontWeight:"bold" }}>{weightedAverageDemo(filteredPolls,c.id,demoFilter)?`${weightedAverageDemo(filteredPolls,c.id,demoFilter)}%`:"—"}</td>)}
                 <td colSpan={2} style={tdStyle}></td>
               </tr>
             </tfoot>
