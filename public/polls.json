@@ -166,6 +166,126 @@
           "Moderate": 12,
           "Conservative": 8
         }
+      },
+      "shapiro": {
+        "gender": {
+          "Men": 4,
+          "Women": 4
+        },
+        "age": {
+          "18-34": 4,
+          "35-49": 4,
+          "50-64": 4,
+          "65+": 4
+        },
+        "race": {
+          "White": 4,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 4
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 4,
+          "College grad": 4,
+          "Postgrad": 5
+        },
+        "ideology": {
+          "Very liberal": 3,
+          "Somewhat liberal": 4,
+          "Moderate": 5,
+          "Conservative": 3
+        }
+      },
+      "pritzker": {
+        "gender": {
+          "Men": 5,
+          "Women": 5
+        },
+        "age": {
+          "18-34": 4,
+          "35-49": 5,
+          "50-64": 5,
+          "65+": 6
+        },
+        "race": {
+          "White": 5,
+          "Black": 4,
+          "Hispanic": 4,
+          "Other": 4
+        },
+        "education": {
+          "No college": 4,
+          "Some college": 5,
+          "College grad": 6,
+          "Postgrad": 6
+        },
+        "ideology": {
+          "Very liberal": 4,
+          "Somewhat liberal": 5,
+          "Moderate": 5,
+          "Conservative": 3
+        }
+      },
+      "beshear": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 3,
+          "35-49": 3,
+          "50-64": 3,
+          "65+": 3
+        },
+        "race": {
+          "White": 3,
+          "Black": 2,
+          "Hispanic": 2,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 3
+        },
+        "ideology": {
+          "Very liberal": 2,
+          "Somewhat liberal": 3,
+          "Moderate": 4,
+          "Conservative": 3
+        }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 5,
+          "Women": 5
+        },
+        "age": {
+          "18-34": 11,
+          "35-49": 6,
+          "50-64": 3,
+          "65+": 2
+        },
+        "race": {
+          "White": 4,
+          "Black": 4,
+          "Hispanic": 6,
+          "Other": 6
+        },
+        "education": {
+          "No college": 4,
+          "Some college": 5,
+          "College grad": 5,
+          "Postgrad": 6
+        },
+        "ideology": {
+          "Very liberal": 12,
+          "Somewhat liberal": 6,
+          "Moderate": 2,
+          "Conservative": 1
+        }
       }
     },
     "moore": 0,
@@ -1248,6 +1368,36 @@
           "Somewhat liberal": 3,
           "Moderate": 3,
           "Conservative": 2
+        }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 3
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
         }
       }
     },
@@ -12236,6 +12386,36 @@
           "Moderate": 4,
           "Conservative": 2
         }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 3
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
+        }
       }
     },
     "moore": null,
@@ -13409,6 +13589,36 @@
           "Somewhat liberal": 3,
           "Moderate": 4,
           "Conservative": 2
+        }
+      },
+      "sanders": {
+        "gender": {
+          "Men": 3,
+          "Women": 3
+        },
+        "age": {
+          "18-34": 7,
+          "35-49": 3,
+          "50-64": 2,
+          "65+": 1
+        },
+        "race": {
+          "White": 3,
+          "Black": 3,
+          "Hispanic": 3,
+          "Other": 3
+        },
+        "education": {
+          "No college": 3,
+          "Some college": 3,
+          "College grad": 3,
+          "Postgrad": 3
+        },
+        "ideology": {
+          "Very liberal": 8,
+          "Somewhat liberal": 3,
+          "Moderate": 1,
+          "Conservative": 0
         }
       }
     },
