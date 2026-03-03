@@ -174,7 +174,7 @@ Return format:
 """
     try:
         resp = client.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-haiku-4-5",
             max_tokens=2000,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -238,7 +238,7 @@ Return ONLY a JSON array of poll objects with source_url. Return [] if nothing f
 """
         try:
             resp = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+                model="claude-haiku-4-5",
                 max_tokens=3000,
                 tools=[{"type": "web_search_20250305", "name": "web_search"}],
                 messages=[{"role": "user", "content": prompt}],
@@ -284,7 +284,7 @@ Return ONLY a valid JSON array. Include source_url for every poll, especially PD
 """
 
     response = client.messages.create(
-        model="claude-haiku-4-5-20251001",
+        model="claude-haiku-4-5",
         max_tokens=4000,
         system=SYSTEM_PROMPT,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
