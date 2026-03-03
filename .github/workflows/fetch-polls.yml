@@ -33,4 +33,4 @@ jobs:
           git config --global user.email "pollbot@github-actions"
           git add public/polls.json
           git diff --staged --quiet || git commit -m "chore: update polls data [$(date +'%Y-%m-%d')]"
-          git push
+          git pull --rebase && git push
