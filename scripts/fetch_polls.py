@@ -7,6 +7,7 @@ import anthropic
 import json
 import os
 import re
+import time
 import io
 from datetime import datetime, date, timedelta
 from pathlib import Path
@@ -370,6 +371,7 @@ def main():
 
     # Phase 1: General web search
     print("\n--- Phase 1: General web search ---")
+    time.sleep(30)
     new_polls = fetch_polls(client, existing)
     print(f"Found {len(new_polls)} candidate polls")
 
