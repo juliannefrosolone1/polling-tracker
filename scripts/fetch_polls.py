@@ -285,7 +285,7 @@ Return ONLY a valid JSON array. Include source_url for every poll, especially PD
 
     response = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=8000,
+        max_tokens=4000,
         system=SYSTEM_PROMPT,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": msg}],
