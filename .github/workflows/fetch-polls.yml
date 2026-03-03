@@ -26,7 +26,6 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/fetch_polls.py
-
 - name: Commit updated polls data
   run: |
     git config --global user.name "Poll Bot"
