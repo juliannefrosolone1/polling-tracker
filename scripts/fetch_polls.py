@@ -1,6 +1,6 @@
 """
 fetch_polls.py - 2028 Democratic primary poll fetcher
-Phase 0: Direct scrape of racetothewh.com/president/2028/dem (Playwright)
+Phase 0: requests-based scrape of racetothewh.com/president/2028/dem
 Phase 1: Claude web search for anything the scrape misses
 Runs daily via GitHub Actions.
 """
@@ -9,6 +9,7 @@ import json
 import os
 import re
 import time
+import requests
 from datetime import datetime
 from pathlib import Path
 
@@ -67,49 +68,61 @@ def existing_keys(polls):
     }
 
 
-def scrape_racetothewh():
-    """Phase 0: Use Playwright to load racetothewh.com and extract poll data via Claude."""
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
-        print("  [Phase 0] Playwright not available, skipping.")
-        return []
-
-    print("  [Phase 0] Launching Playwright to scrape racetothewh.com...")
-    content = ""
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        try:
-            page.goto("https://www.racetothewh.com/president/2028/dem", timeout=30000)
-            page.wait_for_load_state("networkidle", timeout=30000)
-            time.sleep(3)
-            content = page.inner_text("body")
-        except Exception as e:
-            print(f"  [Phase 0] Error during scrape: {e}")
-            browser.close()
-            return []
-        browser.close()
-
-    print(f"  [Phase 0] Page text captured ({len(content)} chars), sending to Claude...")
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    response = client.messages.create(
-        model="claude-opus-4-6",
-        max_tokens=4000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": f"Extract ALL polls from this page text as a JSON array. The page lists polls with columns for date added, type, pollster, and the top candidate percentages. Extract every poll row.\n\n{content[:8000]}"}],
-    )
-    raw = "".join(b.text for b in response.content if b.type == "text").strip()
+def parse_json_response(raw):
+    """Safely extract JSON array from a response string."""
     raw = re.sub(r"```json|```", "", raw).strip()
     if "[" in raw:
         raw = raw[raw.index("["):]
     try:
-        polls = json.loads(raw)
-        print(f"  [Phase 0] Scraped {len(polls)} poll row(s) from racetothewh.com")
-        return polls if isinstance(polls, list) else []
+        result = json.loads(raw)
+        return result if isinstance(result, list) else []
     except Exception as e:
-        print(f"  [Phase 0] Parse error: {e}. Raw: {raw[:200]}")
+        print(f"  JSON parse error: {e}. Raw: {raw[:200]}")
+        return []
+
+
+def scrape_racetothewh():
+    """Phase 0: Fetch racetothewh.com with requests and extract polls via Claude."""
+    print("  [Phase 0] Fetching racetothewh.com with requests...")
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+
+    try:
+        resp = requests.get(
+            "https://www.racetothewh.com/president/2028/dem",
+            headers=headers,
+            timeout=20
+        )
+        resp.raise_for_status()
+        html = resp.text
+        print(f"  [Phase 0] Got {len(html)} chars of HTML")
+    except Exception as e:
+        print(f"  [Phase 0] requests error: {e}")
+        return []
+
+    # Strip HTML tags to get readable text
+    text = re.sub(r"<[^>]+>", " ", html)
+    text = re.sub(r"\s+", " ", text).strip()
+    print(f"  [Phase 0] Stripped to {len(text)} chars of text")
+
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    try:
+        response = client.messages.create(
+            model="claude-opus-4-6",
+            max_tokens=4000,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": f"Extract ALL polls from this page text as a JSON array. Look for rows with a date, pollster name, and candidate percentages.\n\n{text[:8000]}"}],
+        )
+        raw = "".join(b.text for b in response.content if b.type == "text").strip()
+        polls = parse_json_response(raw)
+        print(f"  [Phase 0] Extracted {len(polls)} poll(s) from racetothewh.com")
+        return polls
+    except Exception as e:
+        print(f"  [Phase 0] Claude extraction error: {e}")
         return []
 
 
@@ -136,25 +149,24 @@ Search for:
 
 Return the full JSON array of new polls not in the existing database. Start your response with ["""
 
-    response = client.messages.create(
-        model="claude-opus-4-6",
-        max_tokens=4000,
-        system=SYSTEM_PROMPT,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
-        messages=[{"role": "user", "content": msg}],
-    )
-
-    time.sleep(30)
-
-    raw = "".join(b.text for b in response.content if b.type == "text").strip()
-    raw = re.sub(r"```json|```", "", raw).strip()
-    if "[" in raw:
-        raw = raw[raw.index("["):]
     try:
-        result = json.loads(raw)
-        return result if isinstance(result, list) else []
+        response = client.messages.create(
+            model="claude-opus-4-6",
+            max_tokens=4000,
+            system=SYSTEM_PROMPT,
+            tools=[{"type": "web_search_20250305", "name": "web_search"}],
+            messages=[{"role": "user", "content": msg}],
+        )
+        time.sleep(30)
+        raw = "".join(b.text for b in response.content if b.type == "text").strip()
+        polls = parse_json_response(raw)
+        print(f"  [Phase 1] Found {len(polls)} poll(s)")
+        return polls
+    except anthropic.RateLimitError as e:
+        print(f"  [Phase 1] Rate limit hit, skipping: {e}")
+        return []
     except Exception as e:
-        print(f"  [Phase 1] JSON parse error: {e}\nRaw: {raw[:300]}")
+        print(f"  [Phase 1] Error: {e}")
         return []
 
 
@@ -204,8 +216,8 @@ def main():
 
     all_new = []
 
-    # Phase 0: Direct scrape of racetothewh.com
-    print("\n--- Phase 0: racetothewh.com direct scrape ---")
+    # Phase 0: requests-based scrape of racetothewh.com
+    print("\n--- Phase 0: racetothewh.com scrape ---")
     scraped = scrape_racetothewh()
     all_new.extend(scraped)
 
@@ -213,7 +225,6 @@ def main():
     print("\n--- Phase 1: Claude web search ---")
     combined = existing + all_new
     claude_polls = fetch_polls_claude(combined)
-    print(f"  [Phase 1] Found {len(claude_polls)} poll(s)")
     all_new.extend(claude_polls)
 
     # Merge everything
