@@ -21,33 +21,9 @@ CANDIDATES = [
     "crow", "slotkin", "khanna", "ossoff", "murphy"
 ]
 
-# Maps display names on racetothewh.com to our candidate keys
-CANDIDATE_NAME_MAP = {
-    "harris": "harris",
-    "newsom": "newsom",
-    "buttigieg": "buttigieg",
-    "pete": "buttigieg",
-    "ocasio": "ocasio",
-    "aoc": "ocasio",
-    "cortez": "ocasio",
-    "shapiro": "shapiro",
-    "pritzker": "pritzker",
-    "booker": "booker",
-    "whitmer": "whitmer",
-    "beshear": "beshear",
-    "kelly": "kelly",
-    "crow": "crow",
-    "slotkin": "slotkin",
-    "khanna": "khanna",
-    "ossoff": "ossoff",
-    "murphy": "murphy",
-}
+SYSTEM_PROMPT = """You are a political data analyst. Find 2028 US Democratic presidential primary polls.
 
-SYSTEM_PROMPT = """You are a political data analyst. Find 2028 US Democratic presidential primary polls
-that are NOT already in the existing list provided. Search broadly — national polls, state polls,
-head-to-head matchups, all pollsters.
-
-Return ONLY a valid JSON array. No markdown, no explanation, no code fences.
+Return ONLY a valid JSON array. No markdown, no explanation, no code fences. Start your response with [
 Each poll object must follow this exact schema:
 {
   "pollster": "string",
@@ -91,164 +67,59 @@ def existing_keys(polls):
     }
 
 
-def parse_candidate_pct(text):
-    """Parse 'Harris 23.0%' → ('harris', 23.0)"""
-    if not text or not text.strip():
-        return None, None
-    m = re.match(r"([A-Za-z\-]+)\s+([\d.]+)%?", text.strip())
-    if not m:
-        return None, None
-    name = m.group(1).lower()
-    pct = float(m.group(2))
-    key = CANDIDATE_NAME_MAP.get(name)
-    return key, pct
-
-
-def parse_date_added(text, year=2026):
-    """Parse 'Mar 9' → '2026-03-09'"""
-    if not text:
-        return None
-    try:
-        dt = datetime.strptime(f"{text.strip()} {year}", "%b %d %Y")
-        return dt.strftime("%Y-%m-%d")
-    except ValueError:
-        pass
-    # Try with full year already included
-    try:
-        dt = datetime.strptime(text.strip(), "%b %d, %Y")
-        return dt.strftime("%Y-%m-%d")
-    except ValueError:
-        pass
-    return None
-
-
 def scrape_racetothewh():
-    """Phase 0: Use Playwright to scrape the full poll table from racetothewh.com"""
+    """Phase 0: Use Playwright to load racetothewh.com and extract poll data via Claude."""
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("  [Phase 0] Playwright not available, skipping direct scrape.")
+        print("  [Phase 0] Playwright not available, skipping.")
         return []
 
     print("  [Phase 0] Launching Playwright to scrape racetothewh.com...")
-    polls = []
+    content = ""
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         try:
             page.goto("https://www.racetothewh.com/president/2028/dem", timeout=30000)
-            # Wait for the poll table to render
-            page.wait_for_selector("table", timeout=15000)
-            time.sleep(2)  # Let JS finish rendering
-
-            # Find all tables and look for the polls table
-            tables = page.query_selector_all("table")
-            print(f"  [Phase 0] Found {len(tables)} table(s) on page.")
-
-            for table in tables:
-                rows = table.query_selector_all("tr")
-                if len(rows) < 3:
-                    continue
-
-                # Check if this looks like a polls table by inspecting headers
-                header_row = rows[0]
-                headers = [th.inner_text().strip().lower() for th in header_row.query_selector_all("th, td")]
-                print(f"  [Phase 0] Table headers: {headers}")
-
-                # Look for columns: #, Added, Type, Pollster, First, Second, Third
-                if not any("pollster" in h or "first" in h or "added" in h for h in headers):
-                    continue
-
-                # Map column indices
-                col_map = {}
-                for i, h in enumerate(headers):
-                    if "added" in h:
-                        col_map["date"] = i
-                    elif "type" in h:
-                        col_map["type"] = i
-                    elif "pollster" in h:
-                        col_map["pollster"] = i
-                    elif "first" in h:
-                        col_map["first"] = i
-                    elif "second" in h:
-                        col_map["second"] = i
-                    elif "third" in h:
-                        col_map["third"] = i
-
-                print(f"  [Phase 0] Column map: {col_map}")
-
-                for row in rows[1:]:
-                    cells = [td.inner_text().strip() for td in row.query_selector_all("td")]
-                    if len(cells) < 4:
-                        continue
-
-                    def get(col_name):
-                        idx = col_map.get(col_name)
-                        if idx is not None and idx < len(cells):
-                            return cells[idx]
-                        return ""
-
-                    raw_date = get("date")
-                    pollster = get("pollster")
-                    poll_type = get("type")
-
-                    if not pollster or not raw_date:
-                        continue
-
-                    date_str = parse_date_added(raw_date)
-                    if not date_str:
-                        continue
-
-                    # Determine state from type column
-                    state = "National"
-                    if poll_type and poll_type.lower() not in ("national", ""):
-                        # Could be "Iowa", "New Hampshire", or "Harris Newsom" (head-to-head)
-                        state = poll_type if not re.search(r"[A-Z][a-z]+ [A-Z][a-z]+", poll_type) else "National"
-
-                    poll = {
-                        "pollster": pollster,
-                        "date": date_str,
-                        "state": state,
-                        "type": poll_type,
-                        "sampleSize": None,
-                        "source_url": "https://www.racetothewh.com/president/2028/dem",
-                        "crosstabs": None,
-                    }
-
-                    # Initialize all candidates to null
-                    for c in CANDIDATES:
-                        poll[c] = None
-
-                    # Parse First, Second, Third columns
-                    for col_name in ("first", "second", "third"):
-                        cell_text = get(col_name)
-                        cand_key, pct = parse_candidate_pct(cell_text)
-                        if cand_key and cand_key in CANDIDATES:
-                            poll[cand_key] = pct
-
-                    # Only include if at least one candidate has data
-                    if any(poll[c] is not None for c in CANDIDATES):
-                        polls.append(poll)
-                        print(f"  [Phase 0] ✓ {pollster} ({state}, {date_str})")
-
+            page.wait_for_load_state("networkidle", timeout=30000)
+            time.sleep(3)
+            content = page.inner_text("body")
         except Exception as e:
             print(f"  [Phase 0] Error during scrape: {e}")
-        finally:
             browser.close()
+            return []
+        browser.close()
 
-    print(f"  [Phase 0] Scraped {len(polls)} poll row(s) from racetothewh.com")
-    return polls
+    print(f"  [Phase 0] Page text captured ({len(content)} chars), sending to Claude...")
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    response = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=4000,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": f"Extract ALL polls from this page text as a JSON array. The page lists polls with columns for date added, type, pollster, and the top candidate percentages. Extract every poll row.\n\n{content[:8000]}"}],
+    )
+    raw = "".join(b.text for b in response.content if b.type == "text").strip()
+    raw = re.sub(r"```json|```", "", raw).strip()
+    if "[" in raw:
+        raw = raw[raw.index("["):]
+    try:
+        polls = json.loads(raw)
+        print(f"  [Phase 0] Scraped {len(polls)} poll row(s) from racetothewh.com")
+        return polls if isinstance(polls, list) else []
+    except Exception as e:
+        print(f"  [Phase 0] Parse error: {e}. Raw: {raw[:200]}")
+        return []
 
 
 def fetch_polls_claude(existing):
-    """Phase 1: Claude web search for polls not already in existing list"""
+    """Phase 1: Claude web search for polls not already in existing list."""
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-    # Build a summary of what we already have for dedup context
     recent = sorted(existing, key=lambda p: p["date"], reverse=True)[:20]
     existing_summary = "\n".join(
-        f"- {p['pollster']} | {p.get('state','National')} | {p['date']}"
+        f"- {p['pollster']} | {p.get('state', 'National')} | {p['date']}"
         for p in recent
     )
 
@@ -263,9 +134,7 @@ Search for:
 3. Head-to-head matchups (e.g. Harris vs Newsom)
 4. Any poll from: Manhattan Institute, J.L. Partners, UNH, Emerson, Suffolk, YouGov, Quinnipiac, Morning Consult, Ipsos, PRRI, Monmouth, CBS News, Fox News, CNN, NBC News, ABC/WaPo
 
-Also check racetothewh.com/president/2028/dem for any polls listed there.
-
-Return the full JSON array of new polls not in the existing database."""
+Return the full JSON array of new polls not in the existing database. Start your response with ["""
 
     response = client.messages.create(
         model="claude-opus-4-6",
@@ -275,10 +144,12 @@ Return the full JSON array of new polls not in the existing database."""
         messages=[{"role": "user", "content": msg}],
     )
 
-    time.sleep(30)  # Rate limit buffer
+    time.sleep(30)
 
     raw = "".join(b.text for b in response.content if b.type == "text").strip()
     raw = re.sub(r"```json|```", "", raw).strip()
+    if "[" in raw:
+        raw = raw[raw.index("["):]
     try:
         result = json.loads(raw)
         return result if isinstance(result, list) else []
@@ -340,13 +211,12 @@ def main():
 
     # Phase 1: Claude web search for anything else
     print("\n--- Phase 1: Claude web search ---")
-    # Pass in both existing AND what we just scraped so Phase 1 doesn't duplicate Phase 0
     combined = existing + all_new
     claude_polls = fetch_polls_claude(combined)
     print(f"  [Phase 1] Found {len(claude_polls)} poll(s)")
     all_new.extend(claude_polls)
 
-    # Merge everything into existing
+    # Merge everything
     print(f"\n--- Merging {len(all_new)} candidate poll(s) ---")
     merged, added = merge(existing, all_new)
     merged.sort(key=lambda p: p["date"], reverse=True)
